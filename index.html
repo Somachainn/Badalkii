@@ -1565,82 +1565,110 @@ function updateTotalAssets() {
     const totalAssets = (xlmUsd + laamUsd).toFixed(2);
     document.getElementById('totalAssets').textContent = totalAssets;
 }
-
-// Modify the updateBalanceDisplay function to call updateTotalAssets
+ 
+  
+// Update balance display function - FIXED NULL ERROR
 async function updateBalanceDisplay() {
-    if (!currentKeypair || !server) {
-        console.log('No keypair or server available');
-        return;
+  if (!currentKeypair || !server) {
+    console.log('No keypair or server available');
+    return;
+  }
+
+  try {
+    console.log('Loading account data...');
+    const account = await server.loadAccount(currentKeypair.publicKey());
+    
+    let xlmBalance = 0;
+    let laamBalance = 0;
+
+    account.balances.forEach(balance => {
+      console.log('Processing balance:', balance);
+      
+      if (balance.asset_type === 'native') {
+        xlmBalance = parseFloat(balance.balance);
+      } else if (balance.asset_code === LAAM_TOKEN.code && balance.asset_issuer === LAAM_TOKEN.issuer) {
+        laamBalance = parseFloat(balance.balance);
+        console.log('Found Laam balance:', laamBalance);
+      }
+    });
+
+    // Check if elements exist before updating them
+    if (document.getElementById('xlmBal')) {
+      document.getElementById('xlmBal').textContent = xlmBalance.toFixed(2);
+      document.getElementById('xlmUsd').textContent = (xlmBalance * xlmPriceUSD).toFixed(2);
+      document.getElementById('xlmPrice').textContent = xlmPriceUSD.toFixed(3);
     }
 
-    try {
-        console.log('Loading account data...');
-        const account = await server.loadAccount(currentKeypair.publicKey());
-        
-        let xlmBalance = 0;
-        let laamBalance = 0;
-
-        account.balances.forEach(balance => {
-            console.log('Processing balance:', balance);
-            
-            if (balance.asset_type === 'native') {
-                xlmBalance = parseFloat(balance.balance);
-            } else if (balance.asset_code === LAAM_TOKEN.code && balance.asset_issuer === LAAM_TOKEN.issuer) {
-                laamBalance = parseFloat(balance.balance);
-                console.log('Found Laam balance:', laamBalance);
-            }
-        });
-
-        document.getElementById('xlmBal').textContent = xlmBalance.toFixed(2);
-        document.getElementById('xlmUsd').textContent = (xlmBalance * xlmPriceUSD).toFixed(2);
-        document.getElementById('xlmPrice').textContent = xlmPriceUSD.toFixed(3);
-
-        document.getElementById('laamBal').textContent = laamBalance.toFixed(2);
-        document.getElementById('laamUsd').textContent = (laamBalance * LAAM_TOKEN.currentPrice).toFixed(2);
-        document.getElementById('laamPrice').textContent = LAAM_TOKEN.currentPrice.toFixed(2);
-
-        // Update total assets
-        updateTotalAssets();
-        
-        console.log('Balance display updated successfully');
-        
-    } catch (error) {
-        console.error('Error updating balance display:', error);
-        showError('Failed to load account balance: ' + error.message);
+    if (document.getElementById('laamBal')) {
+      document.getElementById('laamBal').textContent = laamBalance.toFixed(2);
+      document.getElementById('laamUsd').textContent = (laamBalance * LAAM_TOKEN.currentPrice).toFixed(2);
+      document.getElementById('laamPrice').textContent = LAAM_TOKEN.currentPrice.toFixed(2);
     }
+
+    // Update total assets
+    updateTotalAssets();
+    
+    console.log('Balance display updated successfully');
+    
+  } catch (error) {
+    console.error('Error updating balance display:', error);
+    
+    // Only show error if wallet view is visible
+    if (!document.getElementById('loggedInView').classList.contains('hidden')) {
+      showError('Failed to load account balance: ' + error.message);
+    }
+  }
 }
 
-    // Load wallet function
-    async function loadWallet() {
-      if (!currentKeypair) {
-        console.error('No keypair available');
-        return;
-      }
+// Update total assets value - WITH NULL CHECK
+function updateTotalAssets() {
+  // Check if elements exist before updating them
+  if (document.getElementById('xlmUsd') && document.getElementById('laamUsd') && document.getElementById('totalAssets')) {
+    const xlmUsd = parseFloat(document.getElementById('xlmUsd').textContent) || 0;
+    const laamUsd = parseFloat(document.getElementById('laamUsd').textContent) || 0;
+    const totalAssets = (xlmUsd + laamUsd).toFixed(2);
+    document.getElementById('totalAssets').textContent = totalAssets;
+  }
+}
 
-      try {
-        console.log('Loading wallet for:', currentKeypair.publicKey());
-        
-        document.getElementById('pubKey').textContent = currentKeypair.publicKey();
-        
-        await fetchXLMPrice();
-        
-        await updateBalanceDisplay();
-        
-        if (currentTab === 'orderbook') {
-          await fetchOrderbook();
-        } else if (currentTab === 'lastTrades') {
-          await fetchTrades();
-        } else if (currentTab === 'overview') {
-          updateOverview();
-        }
-        
-        console.log('Wallet loaded successfully');
-        
-      } catch (error) {
-        console.error('Error loading wallet:', error);
-        showError('Failed to load wallet: ' + error.message);
-      }
+// Load wallet function - WITH NULL CHECK
+async function loadWallet() {
+  if (!currentKeypair) {
+    console.error('No keypair available');
+    return;
+  }
+
+  try {
+    console.log('Loading wallet for:', currentKeypair.publicKey());
+    
+    // Check if element exists before updating it
+    if (document.getElementById('pubKey')) {
+      document.getElementById('pubKey').textContent = currentKeypair.publicKey();
     }
+    
+    await fetchXLMPrice();
+    
+    await updateBalanceDisplay();
+    
+    if (currentTab === 'orderbook') {
+      await fetchOrderbook();
+    } else if (currentTab === 'lastTrades') {
+      await fetchTrades();
+    } else if (currentTab === 'overview') {
+      updateOverview();
+    }
+    
+    console.log('Wallet loaded successfully');
+    
+  } catch (error) {
+    console.error('Error loading wallet:', error);
+    
+    // Only show error if wallet view is visible
+    if (!document.getElementById('loggedInView').classList.contains('hidden')) {
+      showError('Failed to load wallet: ' + error.message);
+    }
+  }
+}
 
     // Check if wallet exists in localStorage
     function checkSavedWallet() {
