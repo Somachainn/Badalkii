@@ -764,41 +764,71 @@
     <!-- LOGGED IN VIEW -->
     <div id="loggedInView" class="hidden">
       <div class="card">
-        <div class="balances">
-          <div class="pill">
+    <div class="balances">
+        <div class="pill">
             <div>XLM: <span id="xlmBal">0.00</span></div>
             <div class="muted" style="font-size:0.8rem;">$<span id="xlmUsd">0.00</span> ($<span id="xlmPrice">0.00</span>/XLM)</div>
-          </div>
-          <div class="pill">
+        </div>
+        <div class="pill">
             <div>Laam: <span id="laamBal">0.00</span></div>
             <div class="muted" style="font-size:0.8rem;">$<span id="laamUsd">0.00</span> ($<span id="laamPrice">0.06</span>/Laam)</div>
-          </div>
         </div>
-        <label style="margin-top:10px;">Your Public Key</label>
-        <div id="pubKey" class="mono">-</div>
-        <div style="display:flex; gap:10px; margin-top:16px; justify-content:center;">
-          <button id="btnSendToggle">Send</button>
-          <button id="addTrustlineBtn">Add Laam Trustline</button>
-          <button id="logoutBtn" class="btn-danger">Lock Wallet</button>
-        </div>
+    </div>
+    <label style="margin-top:10px;">Your Public Key</label>
+    <div id="pubKey" class="mono">-</div>
+    
+    <!-- TOTAL ASSETS DISPLAY -->
+    <div style="margin: 20px 0; padding: 15px; background: linear-gradient(135deg, #1976d2, #004ba0); border-radius: 16px; color: white; text-align: center;">
+        <div style="font-size: 0.9rem; margin-bottom: 5px;">Total assets</div>
+        <div style="font-size: 1.5rem; font-weight: bold;">$<span id="totalAssets">0.00</span></div>
+    </div>
+    
+    <!-- BUTTONS ROW - UPDATED WITH RECEIVE BUTTON -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px;">
+        <button id="btnSendToggle" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855a.5.5 0 0 0-.087.87l4.89 3.256 3.256 4.89a.5.5 0 0 0 .87-.087L15.314.964zM5.727 9.73l4.422-4.422L5.079 6.32 5.727 9.73zm1.573-2.78l4.423-4.422-1.47 4.923-2.953-0.501z"/>
+            </svg>
+            Send
+        </button>
+        <button id="btnReceive" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #28a745;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm7-6a6 6 0 0 1 6 6v2.5a.5.5 0 0 1-1 0V8A5 5 0 0 0 3 8v2.5a.5.5 0 0 1-1 0V8a6 6 0 0 1 6-6zm-3 9a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5A.5.5 0 0 1 5 11zm1.854-3.854a.5.5 0 1 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L7.293 9.5H3.5a.5.5 0 0 1 0-1h3.793l-1.439-1.354z"/>
+            </svg>
+            Receive
+        </button>
+        <button id="addTrustlineBtn" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #6c757d;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                <path d="M10.97 5.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.235.235 0 0 1 .02-.022z"/>
+            </svg>
+            Add Trustline
+        </button>
+        <button id="logoutBtn" class="btn-danger" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M12 1a1 1 0 0 1 1 1v13h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V2a1 1 0 0 1 1-1h8zm-2 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+            </svg>
+            Lock
+        </button>
+    </div>
 
-        <div id="sendForm" class="send-wrap">
-          <h4 style="margin:0 0 10px 0; color:var(--brand)">Send Assets</h4>
-          <div class="send-row">
+    <div id="sendForm" class="send-wrap">
+        <h4 style="margin:0 0 10px 0; color:var(--brand)">Send Assets</h4>
+        <div class="send-row">
             <div><label for="sendAsset">Asset</label><select id="sendAsset"><option value="XLM">XLM</option><option value="LAAM">Laam</option></select></div>
             <div><label for="sendAmount">Amount</label><input id="sendAmount" type="number" step="0.0000001" placeholder="e.g. 10" /></div>
-          </div>
-          <label for="sendDest" style="margin-top:8px;">Destination Public Key</label>
-          <input id="sendDest" type="text" placeholder="G... destination" />
-          
-          <!-- MEMO FIELD ADDED HERE -->
-          <div class="form-group">
+        </div>
+        <label for="sendDest" style="margin-top:8px;">Destination Public Key</label>
+        <input id="sendDest" type="text" placeholder="G... destination" />
+        
+        <!-- MEMO FIELD ADDED HERE -->
+        <div class="form-group">
             <label for="sendMemo">Memo (Optional)</label>
             <input class="form-input" id="sendMemo" type="text" placeholder="Memo text or ID" />
-          </div>
-          
-          <button id="btnSend" style="margin-top:10px;">Send Now</button>
         </div>
+        
+        <button id="btnSend" style="margin-top:10px;">Send Now</button>
+    </div>
       </div>
 
       <!-- Enhanced Trade Section -->
@@ -2098,6 +2128,46 @@ function switchTab(tabName) {
           sendForm.style.display = 'none';
         }
       });
+          // Event listener for the new Receive button
+      document.getElementById('btnReceive').addEventListener('click', function() {
+          const publicKey = document.getElementById('pubKey').textContent;
+          
+          // Create a modal to show the receive address (QR code and text)
+          const receiveModal = document.createElement('div');
+          receiveModal.style.cssText = `
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: rgba(0,0,0,0.7);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              z-index: 10000;
+          `;
+          
+          receiveModal.innerHTML = `
+              <div style="background: white; padding: 20px; border-radius: 16px; text-align: center; max-width: 300px;">
+                  <h3 style="color: #1976d2; margin-top: 0;">Receive Funds</h3>
+                  <div style="background: white; padding: 10px; margin: 15px 0;">
+                      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${publicKey}" 
+                           alt="QR Code" style="max-width: 150px;">
+                  </div>
+                  <div class="mono" style="font-size: 12px; margin: 15px 0; word-break: break-all;">
+                      ${publicKey}
+                  </div>
+                  <button onclick="this.parentElement.parentElement.remove()" 
+                          style="background: #1976d2; color: white; border: none; padding: 10px 20px; 
+                                 border-radius: 8px; cursor: pointer;">
+                      Close
+                  </button>
+              </div>
+          `;
+          
+          document.body.appendChild(receiveModal);
+      });
+      
       
       document.getElementById('btnSend').addEventListener('click', async function() {
         const asset = document.getElementById('sendAsset').value;
