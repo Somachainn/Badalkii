@@ -2220,7 +2220,6 @@ document.getElementById('btnReceive').addEventListener('click', function() {
     document.body.appendChild(receiveModal);
 });
       
-      
       document.getElementById('btnSend').addEventListener('click', async function() {
         const asset = document.getElementById('sendAsset').value;
         const amount = document.getElementById('sendAmount').value;
@@ -2248,6 +2247,12 @@ document.getElementById('btnReceive').addEventListener('click', function() {
             operation = StellarSdk.Operation.payment({
               destination: destination,
               asset: StellarSdk.Asset.native(),
+              amount: amount
+            });
+          } else if (asset === 'LAAM') {
+            operation = StellarSdk.Operation.payment({
+              destination: destination,
+              asset: LAAM_ASSET,
               amount: amount
             });
           }
@@ -2287,7 +2292,7 @@ document.getElementById('btnReceive').addEventListener('click', function() {
           this.disabled = false;
         }
       });
-
+        
       // Tab switching event listeners
       document.getElementById('overviewTab').addEventListener('click', () => switchTab('overview'));
       document.getElementById('orderbookTab').addEventListener('click', () => switchTab('orderbook'));
