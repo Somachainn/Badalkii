@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Laam wallet</title>
+    <!-- Favicon & OG Image -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/r28SP1bN/20250802-225108.png">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/r28SP1bN/20250802-225108.png">
+    <meta property="og:image" content="https://i.ibb.co/r28SP1bN/20250802-225108.png">
+    <meta property="og:title" content="Laam wallet - Modern Digital Currency">
+    <meta property="og:description" content="Laam Token is a digital asset built on Stellar with a fixed supply.">
+    <meta property="og:url" content="https://laam.online">
+    <meta property="og:type" content="website">
+<!-- Android PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1976d2">
+
+<!-- iPhone / iPad PWA -->
+<link rel="apple-touch-icon" href="https://i.ibb.co/r28SP1bN/20250802-225108.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Laam Wallet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/10.4.0/stellar-sdk.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<!-- Add Chart.js for beautiful charts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root{
+    /* Blue & White Theme */
+    --bg1:#eef2f3; --bg2:#8e9eab;
+    --card:rgba(255, 255, 255, 0.9);
+    --text:#0a192f; --muted:#546e7a;
+    --brand:#0052cc; --brand2:#0041a3; --line:#d0d8e0;
+    --ok:#28a745; --warn:#ffc107; --err:#dc3545;
+    --maxw: 920px; --rad:16px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--text);
+    background:linear-gradient(135deg,#b8c6db,#f5f7fa);
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 14px;
+  }
+  .app{ width:100%; max-width:450px; text-align:center; }
+  
+  /* Logo and Header Styles */
+  .logo-container{ 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    gap:15px; 
+    margin-bottom:40px; 
+  }
+  .logo-container img{ 
+    width:80px; 
+    height:80px; 
+    border-radius:50%;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  }
+  h1{ 
+    margin:0; 
+    font-size:3rem; 
+    font-weight:800; 
+    color:#1976d2; 
+    text-shadow:1px 1px 2px rgba(0,0,0,0.1); 
+  }
+  
+  /* Import Card Styles */
+  .import-card{
+    background:rgba(255, 255, 255, 0.95);
+    border:none;
+    border-radius:24px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.12);
+    padding:40px 30px;
+    margin:0 auto;
+    backdrop-filter:blur(10px);
+    max-width:100%;
+  }
+  
+  .form-group{
+    margin-bottom:24px;
+    text-align:left;
+  }
+  
+  .form-label{
+    display:block;
+    font-size:18px;
+    font-weight:700;
+    color:#1976d2;
+    margin-bottom:12px;
+  }
+  
+  .form-input{
+    width:100%;
+    padding:20px;
+    border:2px solid #e0e0e0;
+    border-radius:16px;
+    font-size:16px;
+    background:#f8f9fa;
+    color:#333;
+    outline:none;
+    transition:all 0.3s ease;
+    font-family:'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  }
+  
+  .form-input:focus{
+    border-color:#1976d2;
+    background:white;
+    box-shadow:0 0 0 4px rgba(25,118,210,0.1);
+  }
+  
+  .form-input::placeholder{
+    color:#bbb;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  
+  .import-button{
+    width:100%;
+    padding:20px;
+    background:#1976d2;
+    color:white;
+    border:none;
+    border-radius:16px;
+    font-size:18px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    cursor:pointer;
+    transition:all 0.3s ease;
+    box-shadow:0 4px 16px rgba(25,118,210,0.3);
+    margin-top:16px;
+  }
+  
+  .import-button:hover{
+    background:#1565c0;
+    box-shadow:0 6px 20px rgba(25,118,210,0.4);
+    transform:translateY(-2px);
+  }
+  
+  .divider{
+    margin:32px 0;
+    text-align:center;
+    position:relative;
+  }
+  
+  .divider::before{
+    content:'';
+    position:absolute;
+    top:50%;
+    left:0;
+    right:0;
+    height:1px;
+    background:#e0e0e0;
+  }
+  
+  .divider-text{
+    background:rgba(255, 255, 255, 0.95);
+    padding:0 16px;
+    color:#666;
+    font-size:14px;
+    font-weight:500;
+  }
+  
+  .generate-link{
+    text-align:center;
+  }
+  
+  .generate-button{
+    color:#1976d2;
+    text-decoration:underline;
+    background:none;
+    border:none;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:600;
+    transition:color 0.3s ease;
+    text-transform:none;
+    padding:0;
+    width:auto;
+    box-shadow:none;
+  }
+  
+  .generate-button:hover{
+    color:#1565c0;
+    transform:none;
+    box-shadow:none;
+  }
+  
+  .note-text{
+    font-size:12px;
+    color:#666;
+    margin-top:8px;
+    line-height:1.4;
+  }
+
+  /* Key Display Modal */
+  .key-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+  }
+  .key-modal.show{
+    display:flex;
+  }
+  .key-modal-content{
+    background:rgba(255, 255, 255, 0.95);
+    border:none;
+    border-radius:24px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.12);
+    padding:40px 30px;
+    max-width:500px;
+    width:90%;
+    max-height:90vh;
+    overflow-y:auto;
+    backdrop-filter:blur(10px);
+  }
+  .key-modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+  }
+  .key-modal-title{
+    font-size:1.8rem;
+    font-weight:700;
+    color:#1976d2;
+    margin:0;
+  }
+  .key-modal-close{
+    background:none;
+    border:none;
+    font-size:2rem;
+    cursor:pointer;
+    color:#666;
+    padding:0;
+    width:auto;
+    height:auto;
+    box-shadow:none;
+    text-transform:none;
+  }
+  .key-modal-close:hover{
+    color:#333;
+    transform:none;
+    box-shadow:none;
+  }
+  .key-display-group{
+    margin-bottom:30px;
+  }
+  .key-display-label{
+    display:block;
+    font-size:16px;
+    font-weight:700;
+    color:#1976d2;
+    margin-bottom:12px;
+  }
+  .key-display-container{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+  .key-display-input{
+    width:100%;
+    padding:15px 60px 15px 15px;
+    border:2px solid #e0e0e0;
+    border-radius:12px;
+    font-size:14px;
+    background:#f8f9fa;
+    color:#333;
+    font-family:'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    word-break:break-all;
+    resize:none;
+  }
+  .copy-btn{
+    position:absolute;
+    right:10px;
+    background:#1976d2;
+    color:white;
+    border:none;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all 0.3s ease;
+    text-transform:uppercase;
+    box-shadow:0 2px 8px rgba(25,118,210,0.3);
+  }
+  .copy-btn:hover{
+    background:#1565c0;
+    box-shadow:0 4px 12px rgba(25,118,210,0.4);
+    transform:translateY(-1px);
+  }
+  .copy-btn.copied{
+    background:#28a745;
+    box-shadow:0 2px 8px rgba(40,167,69,0.3);
+  }
+  .warning-text{
+    background:#fff3cd;
+    border:1px solid #ffeaa7;
+    border-radius:12px;
+    padding:15px;
+    margin:20px 0;
+    color:#856404;
+    font-size:14px;
+    line-height:1.5;
+  }
+  .use-account-btn{
+    width:100%;
+    padding:15px;
+    background:#28a745;
+    color:white;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:700;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:all 0.3s ease;
+    box-shadow:0 4px 16px rgba(40,167,69,0.3);
+  }
+  .use-account-btn:hover{
+    background:#218838;
+    box-shadow:0 6px 20px rgba(40,167,69,0.4);
+    transform:translateY(-2px);
+  }
+
+  /* Main Card Styles */
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--rad);
+    box-shadow:0 10px 30px rgba(0,0,0,0.1); padding:22px; margin:14px auto;
+  }
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:820px){ .grid-2{ grid-template-columns:1fr; } }
+  label{ display:block; text-align:left; margin:8px 0 6px; font-weight:600; color:var(--brand); }
+  input,select,button{
+    width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:12px; font-size:1rem;
+    background:#f8f9fa; color:var(--text); outline:none; transition:border-color .2s ease;
+  }
+  input:focus{ border-color:var(--brand); }
+  button{
+    background:var(--brand); color:#fff; font-weight:700; letter-spacing:.02em; border:none;
+    box-shadow:0 4px 14px rgba(0,82,204,0.3); cursor:pointer; text-transform:uppercase; transition:all .2s ease;
+  }
+  button:hover{ background:var(--brand2); box-shadow:0 6px 18px rgba(0,65,163,0.4); transform:translateY(-2px); }
+  button:disabled{ background:#b0bec5; cursor:not-allowed; box-shadow:none; transform:none; }
+  .btn-secondary{ background:#6c757d; color:#fff; box-shadow:0 4px 14px rgba(0,0,0,0.1); }
+  .btn-secondary:hover{ background:#5a6268; }
+  .btn-danger{ background:var(--err); color:#fff; box-shadow:0 4px 14px rgba(220,53,69,0.3); }
+  .btn-danger:hover{ background:#c82333; }
+  .mono{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+    background:#e9ecef; padding:10px 12px; border-radius:12px; overflow-wrap:anywhere; color:#343a40;
+  }
+  .muted{ color:var(--muted); font-size:.92rem; }
+  .balances{ display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; }
+  .pill{ background:#e9ecef; border:1px solid var(--line); padding:8px 14px; border-radius:999px; font-weight:600; }
+  .hidden{ display:none; }
+  .send-wrap{ display:none; margin-top:16px; text-align:left; border-top:1px solid var(--line); padding-top:16px; }
+  .send-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:640px){ .send-row{ grid-template-columns:1fr; } }
+
+  /* Trade Section Styles */
+  .trade-card{ padding:0; overflow:hidden; }
+  .trade-header{ display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--line); }
+  .trade-header h3{ margin:0; font-size:1.2rem; }
+  .trade-header .icon{ font-size:1.5rem; cursor:pointer; transition:color 0.3s ease; }
+  .trade-header .icon:hover{ color:var(--brand); }
+  .trade-asset-selector{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:#f8f9fa; }
+  .asset-box{ display:flex; align-items:center; gap:8px; }
+  .asset-box img{ width:24px; height:24px; border-radius:50%; }
+  .asset-box .asset-name{ font-weight:600; }
+  .asset-box .asset-issuer{ font-size:.8rem; color:var(--muted); }
+  .swap-icon{ font-size:1.5rem; background:#fff; border-radius:50%; padding:5px; border:1px solid var(--line); cursor:pointer; transition:all 0.3s ease; }
+  .swap-icon:hover{ background:var(--brand); color:#fff; transform:rotate(180deg); }
+  .trade-tabs{ display:flex; border-bottom:1px solid var(--line); background:#f8f9fa; }
+  .trade-tabs .tab{ 
+    flex:1; padding:12px; text-align:center; cursor:pointer; font-weight:600; 
+    color:var(--muted); border-bottom:3px solid transparent; 
+    transition:all 0.3s ease; position:relative;
+  }
+  .trade-tabs .tab:hover{ background:rgba(0,82,204,0.1); color:var(--brand); }
+  .trade-tabs .tab.active{ color:var(--brand); border-bottom-color:var(--brand); background:#fff; }
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
+  .overview-content{ padding:20px; text-align:center; }
+  .price-display{ font-size:2.5rem; font-weight:bold; margin-bottom:10px; color:var(--brand); }
+  .price-change{ font-size:1rem; margin-bottom:20px; }
+  .price-change.positive{ color:var(--ok); }
+  .price-change.negative{ color:var(--err); }
+  .chart-timeframes{ display:flex; justify-content:center; gap:10px; margin-bottom:20px; }
+  .timeframe-btn{ 
+    padding:8px 15px; border-radius:8px; border:1px solid var(--line); 
+    background:#f8f9fa; color:var(--text); cursor:pointer; transition:all 0.3s ease;
+    font-size:0.9rem; font-weight:600;
+  }
+  .timeframe-btn:hover, .timeframe-btn.active{ background:var(--brand); color:#fff; border-color:var(--brand); }
+  .chart-container {
+    width:100%; 
+    height:200px; 
+    margin-bottom:20px;
+    position: relative;
+  }
+  .market-stats{ display:grid; grid-template-columns:1fr 1fr; gap:15px; text-align:left; }
+  .stat-item{ background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid var(--line); }
+  .stat-label{ font-size:0.8rem; color:var(--muted); margin-bottom:4px; }
+  .stat-value{ font-weight:600; color:var(--text); }
+  .orderbook-content{ padding:10px 20px 20px; }
+  .orderbook-table{ width:100%; border-collapse:collapse; margin-bottom:10px; }
+  .orderbook-table th,.orderbook-table td{ text-align:right; padding:8px 4px; font-size:.9rem; }
+  .orderbook-table th{ color:var(--muted); font-weight:600; border-bottom:2px solid var(--line); }
+  .orderbook-table th:first-child,.orderbook-table td:first-child{ text-align:left; }
+  .orderbook-table .bid-row{ cursor:pointer; transition:background 0.2s ease; }
+  .orderbook-table .bid-row:hover{ background:rgba(40,167,69,0.1); }
+  .orderbook-table .bid-row td:nth-child(2){ color:var(--ok); font-weight:600; }
+  .orderbook-table .ask-row{ cursor:pointer; transition:background 0.2s ease; }
+  .orderbook-table .ask-row:hover{ background:rgba(220,53,69,0.1); }
+  .orderbook-table .ask-row td:nth-child(2){ color:var(--err); font-weight:600; }
+  .spread{ 
+    padding:12px 0; text-align:center; font-weight:bold; 
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line); 
+    margin:8px 0; background:#f8f9fa; border-radius:8px;
+  }
+  .trades-content{ padding:10px 20px 20px; }
+  .trades-table{ width:100%; border-collapse:collapse; }
+  .trades-table th,.trades-table td{ text-align:right; padding:8px 4px; font-size:.9rem; }
+  .trades-table th{ color:var(--muted); font-weight:600; border-bottom:2px solid var(--line); }
+  .trades-table th:first-child,.trades-table td:first-child{ text-align:left; }
+  .trade-buy{ color:var(--ok); }
+  .trade-sell{ color:var(--err); }
+  .trade-time{ color:var(--muted); font-size:0.8rem; }
+  .trade-actions{ display:flex; gap:15px; padding:20px; background:#f8f9fa; border-top:1px solid var(--line); }
+  .trade-actions button{ 
+    flex:1; padding:16px; font-size:1.1rem; border-radius:12px; text-transform:uppercase; 
+    font-weight:700; transition:all 0.3s ease; position:relative; overflow:hidden;
+  }
+  .trade-actions button:before{
+    content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition:left 0.5s; z-index:1;
+  }
+  .trade-actions button:hover:before{ left:100%; }
+  .btn-buy{ background:var(--ok); box-shadow:0 4px 14px rgba(40,167,69,0.3); }
+  .btn-buy:hover{ background:#218838; box-shadow:0 6px 20px rgba(40,167,69,0.4); transform:translateY(-2px); }
+  .btn-sell{ background:var(--err); color:#fff; box-shadow:0 4px 14px rgba(220,53,69,0.3); }
+  .btn-sell:hover{ background:#c82333; box-shadow:0 6px 20px rgba(220,53,69,0.4); transform:translateY(-2px); }
+  .loading-spinner{ 
+    display:inline-block; width:20px; height:20px; 
+    border:3px solid #f3f3f3; border-top:3px solid var(--brand); 
+    border-radius:50%; animation:spin 1s linear infinite; 
+  }
+  @keyframes spin{ 0%{ transform:rotate(0deg); } 100%{ transform:rotate(360deg); } }
+
+  /* Modal Styles */
+  .trade-modal{ display:none; position:fixed; inset:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
+  .trade-modal.show{ display:flex; }
+  .modal-content{ 
+    background:var(--card); border:1px solid var(--line); border-radius:var(--rad); 
+    box-shadow:0 20px 40px rgba(0,0,0,0.15); padding:20px; max-width:420px; width:90%; 
+    max-height:90vh; overflow-y:auto; animation:modalSlideIn 0.3s ease-out;
+  }
+  @keyframes modalSlideIn{ from{ opacity:0; transform:translateY(-50px); } to{ opacity:1; transform:translateY(0); } }
+  .modal-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+  .modal-title{ font-size:1.5rem; font-weight:700; color:var(--brand); margin:0; }
+  .modal-close{ 
+    background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--muted); 
+    padding:5px; width:auto; height:auto; box-shadow:none; text-transform:none; 
+    border-radius:50%; transition:all 0.3s ease;
+  }
+  .modal-close:hover{ color:var(--text); background:rgba(0,0,0,0.1); transform:none; box-shadow:none; }
+  .panel{ background:#f8f9fa; border:1px solid var(--line); border-radius:12px; padding:20px; margin:0; }
+  .titleRow{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+  .title{ font-size:1.2rem; font-weight:700; color:var(--brand); }
+  .avail{ font-size:.9rem; color:var(--muted); }
+  .field{ margin-bottom:16px; }
+  .inputWrap{ position:relative; display:flex; align-items:center; }
+  .inputWrap input{ padding-right:60px; margin:0; border:2px solid var(--line); transition:border-color 0.3s ease; }
+  .inputWrap input:focus{ border-color:var(--brand); box-shadow:0 0 0 3px rgba(0,82,204,0.1); }
+  .unit{ position:absolute; right:12px; color:var(--muted); font-weight:600; pointer-events:none; }
+  .hint{ font-size:.8rem; color:var(--muted); margin-top:4px; text-align:left; }
+  .rowBtns{ display:flex; gap:8px; margin-top:8px; }
+  .rowBtns button{ 
+    flex:1; padding:8px 12px; font-size:.9rem; background:#e9ecef; color:var(--text); 
+    border:1px solid var(--line); text-transform:none; font-weight:600; border-radius:6px;
+    transition:all 0.3s ease;
+  }
+  .rowBtns button:hover{ background:var(--brand); color:#fff; transform:translateY(-1px); }
+  .totalBox{ margin-bottom:20px; }
+  .totalBox input{ background:#e9ecef; color:var(--muted); }
+  .cta{ 
+    padding:16px; font-size:1.1rem; font-weight:700; text-transform:uppercase; margin:0; 
+    border-radius:12px; transition:all 0.3s ease; position:relative; overflow:hidden;
+  }
+  .cta:before{
+    content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition:left 0.5s; z-index:1;
+  }
+  .cta:hover:before{ left:100%; }
+  .cta.buy{ background:var(--ok); box-shadow:0 4px 14px rgba(40,167,69,0.3); }
+  .cta.buy:hover{ background:#218838; box-shadow:0 6px 20px rgba(40,167,69,0.4); transform:translateY(-2px); }
+  .cta.sell{ background:var(--err); color:#fff; box-shadow:0 4px 14px rgba(220,53,69,0.3); }
+  .cta.sell:hover{ background:#c82333; box-shadow:0 6px 20px rgba(220,53,69,0.4); transform:translateY(-2px); }
+
+  /* My Orders Modal Styles */
+  .my-orders-modal{ display:none; position:fixed; inset:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
+  .my-orders-modal.show{ display:flex; }
+  .my-orders-modal-content{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--rad); 
+    box-shadow:0 20px 40px rgba(0,0,0,0.15); padding:30px; max-width:500px; width:90%; 
+    max-height:90vh; overflow-y:auto;
+  }
+  .my-orders-modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+  }
+  .my-orders-modal-title{
+    font-size:1.5rem;
+    font-weight:700;
+    color:var(--brand);
+    margin:0;
+  }
+  .my-orders-modal-close{
+    background:none;
+    border:none;
+    font-size:1.8rem;
+    cursor:pointer;
+    color:var(--muted);
+    padding:0;
+    width:auto;
+    height:auto;
+    box-shadow:none;
+    text-transform:none;
+  }
+  .my-orders-modal-close:hover{
+    color:var(--text);
+    transform:none;
+    box-shadow:none;
+  }
+  .orders-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+  }
+  .order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .order-item:hover {
+    background-color: #f8f9fa;
+  }
+  .order-item.selected {
+    border-color: var(--brand);
+    background-color: rgba(0, 82, 204, 0.1);
+  }
+  .order-type {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+  .order-type.buy {
+    color: var(--ok);
+  }
+  .order-type.sell {
+    color: var(--err);
+  }
+  .order-amount, .order-price {
+    font-family: 'SF Mono', monospace;
+  }
+  .order-actions{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+  }
+  .order-action-btn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all 0.3s ease;
+    text-transform:none;
+  }
+  .edit-order-btn{
+    background:var(--brand);
+    color:white;
+    box-shadow:0 4px 16px rgba(25,118,210,0.3);
+  }
+  .edit-order-btn:hover{
+    background:var(--brand2);
+    box-shadow:0 6px 20px rgba(25,118,210,0.4);
+    transform:translateY(-2px);
+  }
+  .cancel-order-btn{
+    background:var(--err);
+    color:white;
+    box-shadow:0 4px 16px rgba(220,53,69,0.3);
+  }
+  .cancel-order-btn:hover{
+    background:#c82333;
+    box-shadow:0 6px 20px rgba(220,53,69,0.4);
+    transform:translateY(-2px);
+  }
+
+  /* Animation */
+  .import-card {
+    animation: slideUp 0.6s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Send Wizard Styles */
+  .send-wizard {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .send-wizard.show {
+    display: flex;
+  }
+  
+  .wizard-content {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    position: relative;
+  }
+  
+  .wizard-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .wizard-title {
+    color: #1976d2;
+    margin: 0 0 10px 0;
+    font-size: 1.5rem;
+  }
+  
+  .wizard-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .wizard-step {
+    text-align: center;
+    flex: 1;
+    position: relative;
+  }
+  
+  .wizard-step:not(:last-child):after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    right: -50%;
+    width: 100%;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 1;
+  }
+  
+  .step-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .step-number.active {
+    background: #1976d2;
+    color: white;
+  }
+  
+  .step-label {
+    font-size: 0.8rem;
+    color: #666;
+  }
+  
+  .step-label.active {
+    color: #1976d2;
+    font-weight: 600;
+  }
+  
+  .wizard-body {
+    margin-bottom: 20px;
+  }
+  
+  .wizard-step-content {
+    display: none;
+  }
+  
+  .wizard-step-content.active {
+    display: block;
+  }
+  
+  .wizard-footer {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .wizard-btn {
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .wizard-btn.prev {
+    background: #f8f9fa;
+    color: #333;
+  }
+  
+  .wizard-btn.next, .wizard-btn.done {
+    background: #1976d2;
+    color: white;
+  }
+  
+  .wizard-btn:disabled {
+    background: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+  }
+  
+  .qr-scanner-container {
+    text-align: center;
+    margin: 15px 0;
+  }
+  
+  .qr-video {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+  }
+  
+  .qr-result {
+    margin-top: 15px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    font-family: monospace;
+    word-break: break-all;
+  }
+  
+  .scan-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+  }
+  
+  .toggle-btn {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .toggle-btn.active {
+    background: #1976d2;
+    color: white;
+    border-color: #1976d2;
+  }
+  
+  .public-key-input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: monospace;
+    margin-bottom: 15px;
+  }
+  
+  .public-key-input:focus {
+    border-color: #1976d2;
+    outline: none;
+  }
+  
+  .amount-input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  
+  .amount-input:focus {
+    border-color: #1976d2;
+    outline: none;
+  }
+  
+  .review-details {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+  }
+  
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .detail-label {
+    color: #666;
+  }
+  
+  .detail-value {
+    font-weight: 600;
+  }
+  
+  .success-icon {
+    text-align: center;
+    font-size: 60px;
+    color: #28a745;
+    margin: 20px 0;
+  }
+  
+  .success-message {
+    text-align: center;
+    color: #28a745;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="logo-container">
+    <img src="https://i.ibb.co/r28SP1bN/20250802-225108.png" alt="Laam Logo">
+    <h1>Laam</h1>
+  </div>
+  
+  <div class="import-card">
+    <div class="form-group">
+      <label class="form-label" for="secretKey">Geli Furahaaga Sirta ah</label>
+      <input type="password" id="secretKey" class="form-input" placeholder="S••••••••••••••••••••••••••••••••">
+    </div>
+    <button id="importBtn" class="import-button">Geli</button>
+    
+    <div class="divider">
+      <span class="divider-text">Ama</span>
+    </div>
+    
+    <div class="generate-link">
+      <button id="generateBtn" class="generate-button">Abuur akoon cusub</button>
+      <p class="note-text">Haddii aadan haysan akoon, waxaad abuuri kartaa mid cusub.</p>
+    </div>
+  </div>
+  
+  <div class="key-modal" id="keyModal">
+    <div class="key-modal-content">
+      <div class="key-modal-header">
+        <h2 class="key-modal-title">Akoonkaaga Laami ah</h2>
+        <button class="key-modal-close" id="keyModalClose">×</button>
+      </div>
+      
+      <div class="key-display-group">
+        <label class="key-display-label">Public Key (La wadaagi)</label>
+        <div class="key-display-container">
+          <textarea id="publicKeyDisplay" class="key-display-input" rows="3" readonly></textarea>
+          <button class="copy-btn" id="copyPublicKey">Copy</button>
+        </div>
+      </div>
+      
+      <div class="key-display-group">
+        <label class="key-display-label">Secret Key (Si naxdin leh u kaydi)</label>
+        <div class="key-display-container">
+          <textarea id="secretKeyDisplay" class="key-display-input" rows="3" readonly></textarea>
+          <button class="copy-btn" id="copySecretKey">Copy</button>
+        </div>
+      </div>
+      
+      <div class="warning-text">
+        <strong>Digniin:</strong> Kaydi furahaaga sirta ah meel aan adagayn. Qarin karaagooyinkaaga. Ha wadaagin furahaaga sirta ah qof kasta!
+      </div>
+      
+      <button class="use-account-btn" id="useAccountBtn">Isticmaal Akoonkan</button>
+    </div>
+  </div>
+  
+  <div class="card" id="mainCard" style="display:none">
+    <div class="balances">
+      <div class="pill" id="balanceDisplay">0.00 LAAM</div>
+      <div class="pill" id="usdBalance">$0.00</div>
+    </div>
+    
+    <div class="grid-2">
+      <button id="sendBtn">U dir</button>
+      <button id="receiveBtn">Hel</button>
+    </div>
+    
+    <div class="send-wrap" id="sendWrap">
+      <div class="send-row">
+        <div>
+          <label>Lacagta</label>
+          <input type="number" id="sendAmount" placeholder="0.00" step="0.0000001">
+        </div>
+        <div>
+          <label>U dir kuna</label>
+          <input type="text" id="sendTo" placeholder="Geli public key">
+        </div>
+      </div>
+      <div class="muted" style="margin-top:8px">Gebi ahaan waa: <span id="sendMax">0.00 LAAM</span></div>
+      <button id="confirmSend" class="btn-secondary" style="margin-top:16px">Xaqiiji</button>
+    </div>
+  </div>
+</div>
+
+<!-- Send Wizard Modal -->
+<div class="send-wizard" id="sendWizard">
+  <div class="wizard-content">
+    <div class="wizard-header">
+      <h2 class="wizard-title">U dir Lacag</h2>
+      <div class="wizard-steps">
+        <div class="wizard-step">
+          <div class="step-number active" id="step1Number">1</div>
+          <div class="step-label active">Cinwaanka</div>
+        </div>
+        <div class="wizard-step">
+          <div class="step-number" id="step2Number">2</div>
+          <div class="step-label">Qadarka</div>
+        </div>
+        <div class="wizard-step">
+          <div class="step-number" id="step3Number">3</div>
+          <div class="step-label">Xaqiijinta</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="wizard-body">
+      <!-- Step 1: Address -->
+      <div class="wizard-step-content active" id="step1Content">
+        <div class="scan-toggle">
+          <button class="toggle-btn active" id="manualEntryBtn">Geli</button>
+          <button class="toggle-btn" id="scanBtn">Scan QR</button>
+        </div>
+        
+        <div id="manualEntrySection">
+          <input type="text" class="public-key-input" id="recipientPublicKey" placeholder="Geli public key-ga la heli doono">
+        </div>
+        
+        <div id="qrScannerSection" style="display:none">
+          <div class="qr-scanner-container">
+            <video id="qrVideo" class="qr-video"></video>
+            <div id="qrResult" class="qr-result"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Step 2: Amount -->
+      <div class="wizard-step-content" id="step2Content">
+        <input type="number" class="amount-input" id="sendAmountWizard" placeholder="0.00" step="0.0000001">
+        <div class="muted" style="margin-top:8px; text-align:center">Gebi ahaan waa: <span id="sendMaxWizard">0.00 LAAM</span></div>
+      </div>
+      
+      <!-- Step 3: Review -->
+      <div class="wizard-step-content" id="step3Content">
+        <div class="review-details">
+          <div class="detail-row">
+            <span class="detail-label">Lacagta:</span>
+            <span class="detail-value" id="reviewAmount">0.00 LAAM</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Kharashka:</span>
+            <span class="detail-value" id="reviewFee">0.00001 XLM</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">U dir kuna:</span>
+            <span class="detail-value" id="reviewAddress">G2FC...</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Success Step -->
+      <div class="wizard-step-content" id="stepSuccessContent" style="display:none">
+        <div class="success-icon">✓</div>
+        <div class="success-message">Lacagta si guul leh ayaa loo diray!</div>
+      </div>
+    </div>
+    
+    <div class="wizard-footer">
+      <button class="wizard-btn prev" id="prevBtn" style="display:none">Hore</button>
+      <button class="wizard-btn next" id="nextBtn">Xiga</button>
+      <button class="wizard-btn done" id="doneBtn" style="display:none">Dhameystir</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// DOM Elements
+const secretKeyInput = document.getElementById('secretKey');
+const importBtn = document.getElementById('importBtn');
+const generateBtn = document.getElementById('generateBtn');
+const keyModal = document.getElementById('keyModal');
+const keyModalClose = document.getElementById('keyModalClose');
+const publicKeyDisplay = document.getElementById('publicKeyDisplay');
+const secretKeyDisplay = document.getElementById('secretKeyDisplay');
+const copyPublicKeyBtn = document.getElementById('copyPublicKey');
+const copySecretKeyBtn = document.getElementById('copySecretKey');
+const useAccountBtn = document.getElementById('useAccountBtn');
+const mainCard = document.getElementById('mainCard');
+const balanceDisplay = document.getElementById('balanceDisplay');
+const usdBalance = document.getElementById('usdBalance');
+const sendBtn = document.getElementById('sendBtn');
+const receiveBtn = document.getElementById('receiveBtn');
+const sendWrap = document.getElementById('sendWrap');
+const sendAmount = document.getElementById('sendAmount');
+const sendTo = document.getElementById('sendTo');
+const sendMax = document.getElementById('sendMax');
+const confirmSend = document.getElementById('confirmSend');
+
+// Send Wizard Elements
+const sendWizard = document.getElementById('sendWizard');
+const step1Number = document.getElementById('step1Number');
+const step2Number = document.getElementById('step2Number');
+const step3Number = document.getElementById('step3Number');
+const step1Content = document.getElementById('step1Content');
+const step2Content = document.getElementById('step2Content');
+const step3Content = document.getElementById('step3Content');
+const stepSuccessContent = document.getElementById('stepSuccessContent');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const doneBtn = document.getElementById('doneBtn');
+const manualEntryBtn = document.getElementById('manualEntryBtn');
+const scanBtn = document.getElementById('scanBtn');
+const manualEntrySection = document.getElementById('manualEntrySection');
+const qrScannerSection = document.getElementById('qrScannerSection');
+const recipientPublicKey = document.getElementById('recipientPublicKey');
+const sendAmountWizard = document.getElementById('sendAmountWizard');
+const sendMaxWizard = document.getElementById('sendMaxWizard');
+const reviewAmount = document.getElementById('reviewAmount');
+const reviewFee = document.getElementById('reviewFee');
+const reviewAddress = document.getElementById('reviewAddress');
+
+// State variables
+let currentStep = 1;
+let keypair = null;
+let server = null;
+let account = null;
+let qrScanner = null;
+
+// Initialize the application
+function init() {
+  // Check if we have keys in localStorage
+  const storedPublicKey = localStorage.getItem('publicKey');
+  const storedSecretKey = localStorage.getItem('secretKey');
+  
+  if (storedPublicKey && storedSecretKey) {
+    try {
+      keypair = StellarSdk.Keypair.fromSecret(storedSecretKey);
+      showMainInterface();
+      loadAccount();
+    } catch (e) {
+      console.error('Error restoring keypair from localStorage:', e);
+      localStorage.removeItem('publicKey');
+      localStorage.removeItem('secretKey');
+    }
+  }
+  
+  // Initialize Stellar server
+  server = new StellarSdk.Horizon.Server('https://horizon-testnet.stellar.org');
+}
+
+// Show the main interface
+function showMainInterface() {
+  document.querySelector('.import-card').style.display = 'none';
+  mainCard.style.display = 'block';
+}
+
+// Load account details
+async function loadAccount() {
+  if (!keypair) return;
+  
+  try {
+    account = await server.loadAccount(keypair.publicKey());
+    updateBalance();
+  } catch (e) {
+    console.error('Error loading account:', e);
+    if (e instanceof StellarSdk.NotFoundError) {
+      alert('Akoonkaaga ma jiro network-ka. Waxa laga yaabaa inaad abuurto akoon cusub.');
+    }
+  }
+}
+
+// Update balance display
+function updateBalance() {
+  if (!account) return;
+  
+  // Find LAAM balance
+  const laamBalance = account.balances.find(b => 
+    b.asset_code === 'LAAM' && b.asset_issuer === 'GA5XIGA5C7QTPTWXQHY6MCJRMTRZDOSHR6EFIBNDQTCQHG262N4GGK4O'
+  );
+  
+  if (laamBalance) {
+    balanceDisplay.textContent = `${parseFloat(laamBalance.balance).toFixed(2)} LAAM`;
+    sendMax.textContent = `${parseFloat(laamBalance.balance).toFixed(2)} LAAM`;
+    sendMaxWizard.textContent = `${parseFloat(laamBalance.balance).toFixed(2)} LAAM`;
+    
+    // Simple conversion (in a real app, you'd fetch actual price data)
+    const usdValue = (parseFloat(laamBalance.balance) * 0.5).toFixed(2);
+    usdBalance.textContent = `$${usdValue}`;
+  } else {
+    balanceDisplay.textContent = '0.00 LAAM';
+    sendMax.textContent = '0.00 LAAM';
+    sendMaxWizard.textContent = '0.00 LAAM';
+    usdBalance.textContent = '$0.00';
+  }
+}
+
+// Import account with secret key
+importBtn.addEventListener('click', () => {
+  const secretKey = secretKeyInput.value.trim();
+  
+  if (!secretKey) {
+    alert('Fadlan geli furahaaga sirta ah');
+    return;
+  }
+  
+  try {
+    keypair = StellarSdk.Keypair.fromSecret(secretKey);
+    
+    // Store keys in localStorage
+    localStorage.setItem('publicKey', keypair.publicKey());
+    localStorage.setItem('secretKey', secretKey);
+    
+    showMainInterface();
+    loadAccount();
+  } catch (e) {
+    alert('Furahaaga sirta ah waa khalad. Fadlan hubi oo isku day mar kale.');
+    console.error('Error importing account:', e);
+  }
+});
+
+// Generate new account
+generateBtn.addEventListener('click', () => {
+  keypair = StellarSdk.Keypair.random();
+  
+  // Display keys in modal
+  publicKeyDisplay.value = keypair.publicKey();
+  secretKeyDisplay.value = keypair.secret();
+  
+  // Show modal
+  keyModal.classList.add('show');
+});
+
+// Close key modal
+keyModalClose.addEventListener('click', () => {
+  keyModal.classList.remove('show');
+});
+
+// Copy public key
+copyPublicKeyBtn.addEventListener('click', () => {
+  publicKeyDisplay.select();
+  document.execCommand('copy');
+  copyPublicKeyBtn.textContent = 'Copied!';
+  setTimeout(() => {
+    copyPublicKeyBtn.textContent = 'Copy';
+  }, 2000);
+});
+
+// Copy secret key
+copySecretKeyBtn.addEventListener('click', () => {
+  secretKeyDisplay.select();
+  document.execCommand('copy');
+  copySecretKeyBtn.textContent = 'Copied!';
+  setTimeout(() => {
+    copySecretKeyBtn.textContent = 'Copy';
+  }, 2000);
+});
+
+// Use the generated account
+useAccountBtn.addEventListener('click', () => {
+  // Store keys in localStorage
+  localStorage.setItem('publicKey', keypair.publicKey());
+  localStorage.setItem('secretKey', keypair.secret());
+  
+  // Close modal and show main interface
+  keyModal.classList.remove('show');
+  showMainInterface();
+  
+  // Note: New accounts need to be funded on the testnet
+  alert('Fadlan hubi akoonkaaga testnet. Akoon cusub waxay u baahan tahay in lagu dejiyo.');
+});
+
+// Send button click
+sendBtn.addEventListener('click', () => {
+  // Show the send wizard
+  sendWizard.classList.add('show');
+  resetWizard();
+});
+
+// Reset wizard to initial state
+function resetWizard() {
+  currentStep = 1;
+  updateWizardSteps();
+  recipientPublicKey.value = '';
+  sendAmountWizard.value = '';
+  manualEntrySection.style.display = 'block';
+  qrScannerSection.style.display = 'none';
+  manualEntryBtn.classList.add('active');
+  scanBtn.classList.remove('active');
+  
+  if (qrScanner) {
+    qrScanner.stop();
+    const video = document.getElementById('qrVideo');
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(track => track.stop());
+    }
+  }
+}
+
+// Update wizard steps UI
+function updateWizardSteps() {
+  // Reset all steps
+  step1Number.classList.remove('active');
+  step2Number.classList.remove('active');
+  step3Number.classList.remove('active');
+  
+  step1Content.classList.remove('active');
+  step2Content.classList.remove('active');
+  step3Content.classList.remove('active');
+  stepSuccessContent.classList.remove('active');
+  
+  // Hide all buttons initially
+  prevBtn.style.display = 'none';
+  nextBtn.style.display = 'none';
+  doneBtn.style.display = 'none';
+  
+  // Activate current step
+  if (currentStep === 1) {
+    step1Number.classList.add('active');
+    step1Content.classList.add('active');
+    nextBtn.style.display = 'block';
+  } else if (currentStep === 2) {
+    step1Number.classList.add('active');
+    step2Number.classList.add('active');
+    step2Content.classList.add('active');
+    prevBtn.style.display = 'block';
+    nextBtn.style.display = 'block';
+  } else if (currentStep === 3) {
+    step1Number.classList.add('active');
+    step2Number.classList.add('active');
+    step3Number.classList.add('active');
+    step3Content.classList.add('active');
+    prevBtn.style.display = 'block';
+    nextBtn.style.display = 'block';
+    
+    // Update review details
+    reviewAmount.textContent = `${sendAmountWizard.value} LAAM`;
+    reviewAddress.textContent = `${recipientPublicKey.value.substring(0, 4)}...${recipientPublicKey.value.substring(recipientPublicKey.value.length - 4)}`;
+  } else if (currentStep === 4) {
+    stepSuccessContent.classList.add('active');
+    doneBtn.style.display = 'block';
+  }
+}
+
+// Next button click
+nextBtn.addEventListener('click', () => {
+  if (currentStep === 1) {
+    // Validate recipient address
+    if (!recipientPublicKey.value.trim()) {
+      alert('Fadlan geli public key-ga la heli doono');
+      return;
+    }
+    
+    // Simple validation for Stellar public key format
+    if (!recipientPublicKey.value.startsWith('G')) {
+      alert('Public key-ga waa khalad. Fadlan geli public key sax ah.');
+      return;
+    }
+    
+    currentStep = 2;
+  } else if (currentStep === 2) {
+    // Validate amount
+    if (!sendAmountWizard.value || parseFloat(sendAmountWizard.value) <= 0) {
+      alert('Fadlan geli qadar sax ah');
+      return;
+    }
+    
+    // Check if balance is sufficient
+    const balanceText = balanceDisplay.textContent;
+    const balance = parseFloat(balanceText.split(' ')[0]);
+    const amount = parseFloat(sendAmountWizard.value);
+    
+    if (amount > balance) {
+      alert('Lacagtaad gelisay waxay ka badan tahay lacagtaaada');
+      return;
+    }
+    
+    currentStep = 3;
+  } else if (currentStep === 3) {
+    // Send transaction
+    sendTransaction();
+    currentStep = 4;
+  }
+  
+  updateWizardSteps();
+});
+
+// Previous button click
+prevBtn.addEventListener('click', () => {
+  if (currentStep > 1) {
+    currentStep--;
+    updateWizardSteps();
+  }
+});
+
+// Done button click
+doneBtn.addEventListener('click', () => {
+  sendWizard.classList.remove('show');
+  // Reload account to update balance
+  loadAccount();
+});
+
+// Manual entry button click
+manualEntryBtn.addEventListener('click', () => {
+  manualEntryBtn.classList.add('active');
+  scanBtn.classList.remove('active');
+  manualEntrySection.style.display = 'block';
+  qrScannerSection.style.display = 'none';
+  
+  if (qrScanner) {
+    qrScanner.stop();
+    const video = document.getElementById('qrVideo');
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(track => track.stop());
+    }
+  }
+});
+
+// Scan QR button click
+scanBtn.addEventListener('click', () => {
+  scanBtn.classList.add('active');
+  manualEntryBtn.classList.remove('active');
+  manualEntrySection.style.display = 'none';
+  qrScannerSection.style.display = 'block';
+  
+  // Initialize QR scanner
+  initQRScanner();
+});
+
+// Initialize QR scanner
+function initQRScanner() {
+  const video = document.getElementById('qrVideo');
+  const qrResult = document.getElementById('qrResult');
+  
+  // Check if browser supports camera access
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    qrResult.textContent = 'Shaashad QRka ma shaqaynayo browser-kaan. Fadlan isticmaal browser cusub.';
+    return;
+  }
+  
+  // Request camera access
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+    .then(stream => {
+      video.srcObject = stream;
+      video.setAttribute('playsinline', true);
+      video.play();
+      
+      // Simple QR code detection (in a real app, you'd use a proper QR library)
+      requestAnimationFrame(function scanFrame() {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+          // This is a simplified version - in reality you'd use a QR library like jsQR
+          // For demo purposes, we'll just simulate QR detection
+          simulateQRDetection();
+        } else {
+          requestAnimationFrame(scanFrame);
+        }
+      });
+    })
+    .catch(err => {
+      console.error('Error accessing camera:', err);
+      qrResult.textContent = 'Khalad: Ma hayo ogolaanshaha camera-ga. Fadlan ogolaanshaha camera-ga si aad u scan-gareysid.';
+    });
+}
+
+// Simulate QR detection for demo purposes
+function simulateQRDetection() {
+  const qrResult = document.getElementById('qrResult');
+  qrResult.textContent = 'Raadi QR code... (Demo: Geli public key-ga)';
+  
+  // In a real app, you would use a QR library like:
+  // const canvas = document.createElement('canvas');
+  // canvas.width = video.videoWidth;
+  // canvas.height = video.videoHeight;
+  // const context = canvas.getContext('2d');
+  // context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  // const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  // const code = jsQR(imageData.data, imageData.width, imageData.height);
+  
+  // For demo, we'll just wait a bit and then simulate a scan
+  setTimeout(() => {
+    // In a real app, you would use the actual QR code content:
+    // recipientPublicKey.value = code.data;
+    
+    // For demo, we'll just show a message
+    qrResult.textContent = 'QR code lama helin. Fadlan isku day mar kale.';
+  }, 2000);
+}
+
+// Send transaction
+async function sendTransaction() {
+  if (!keypair || !account) return;
+  
+  try {
+    // Find LAAM asset
+    const laamAsset = new StellarSdk.Asset(
+      'LAAM',
+      'GA5XIGA5C7QTPTWXQHY6MCJRMTRZDOSHR6EFIBNDQTCQHG262N4GGK4O'
+    );
+    
+    // Create transaction
+    const transaction = new StellarSdk.TransactionBuilder(account, {
+      fee: StellarSdk.BASE_FEE,
+      networkPassphrase: StellarSdk.Networks.TESTNET
+    })
+      .addOperation(StellarSdk.Operation.payment({
+        destination: recipientPublicKey.value,
+        asset: laamAsset,
+        amount: sendAmountWizard.value.toString()
+      }))
+      .setTimeout(30)
+      .build();
+    
+    // Sign transaction
+    transaction.sign(keypair);
+    
+    // Submit transaction
+    const result = await server.submitTransaction(transaction);
+    console.log('Transaction successful:', result);
+  } catch (e) {
+    console.error('Error sending transaction:', e);
+    alert('Khalad ayaa dhacay markii la diraynayay lacagta: ' + e.message);
+    
+    // Go back to step 3 on error
+    currentStep = 3;
+    updateWizardSteps();
+  }
+}
+
+// Initialize the app
+init();
+</script>
+</body>
+</html>
