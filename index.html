@@ -2670,14 +2670,6 @@ async function createRealPriceChart(timeframe = '1D') {
     priceChart.destroy();
   }
   
-  // If we don't have enough data, show the Stellar.expert iframe
-if (prices.length < 2) {
-  // Hide the canvas
-  ctx.canvas.style.display = 'none';
-  
-  return;
-}
-  
   priceChart = new Chart(ctx, {
     type: 'line',
     data: {
