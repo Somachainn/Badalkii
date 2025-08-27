@@ -780,14 +780,15 @@
         <div style="font-size: 0.9rem; margin-bottom: 5px; opacity: 0.9;">Total assets</div>
         <div style="font-size: 1.8rem; font-weight: bold;">$<span id="totalAssets">188.07</span></div>
     </div>
-    
     <!-- BUTTONS ROW - UPDATED DESIGN -->
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;">
-        <button id="btnSendToggle" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #f8f9fa; color: #212529; border: 2px solid #e9ecef;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855a.5.5 0 0 0-.087.87l4.89 3.256 3.256 4.89a.5.5 0 0 0 .87-.087L15.314.964zM5.727 9.73l4.422-4.422L5.079 6.32 5.727 9.73zm1.573-2.78l4.423-4.422-1.47 4.923-2.953-0.501z"/>
-            </svg>
-            Send
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;">
+    <button id="openSendWizard" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #f8f9fa; color: #212529; border: 2px solid #e9ecef;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855a.5.5 0 0 0-.087.87l4.89 3.256 3.256 4.89a.5.5 0 0 0 .87-.087L15.314.964zM5.727 9.73l4.422-4.422L5.079 6.32 5.727 9.73zm1.573-2.78l4.423-4.422-1.47 4.923-2.953-0.501z"/>
+        </svg>
+        Send
+    </button>
+</div>
         </button>
         <button id="btnReceive" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #28a745; color: white;">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
@@ -810,25 +811,46 @@
         </button>
     </div>
 
-    <div id="sendForm" class="send-wrap">
-        <h4 style="margin:0 0 10px 0; color:var(--brand)">Send Assets</h4>
-        <div class="send-row">
-            <div><label for="sendAsset">Asset</label><select id="sendAsset"><option value="XLM">XLM</option><option value="LAAM">Laam</option></select></div>
-            <div><label for="sendAmount">Amount</label><input id="sendAmount" type="number" step="0.0000001" placeholder="e.g. 10" /></div>
-        </div>
-        <label for="sendDest" style="margin-top:8px;">Destination Public Key</label>
-        <input id="sendDest" type="text" placeholder="G... destination" />
-        
-        <!-- MEMO FIELD ADDED HERE -->
-        <div class="form-group">
-            <label for="sendMemo">Memo (Optional)</label>
-            <input class="form-input" id="sendMemo" type="text" placeholder="Memo text or ID" />
-        </div>
-        
-        <button id="btnSend" style="margin-top:10px;">Send Now</button>
-    </div>
-       </div>
+           <!-- ✅ Send Wizard Modal -->
+<div id="sendWizard" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:white; padding:20px; border-radius:12px; max-width:400px; width:90%;">
+    <h3 id="wizardTitle">Step 1: Choose Asset</h3>
 
+    <!-- Step 1 -->
+    <div id="wizardStep1">
+      <label>Asset</label>
+      <select id="wizAsset">
+        <option value="XLM">XLM</option>
+        <option value="Laam">Laam</option>
+      </select>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="wizardStep2" style="display:none;">
+      <label>Destination Public Key</label>
+      <input id="wizDest" type="text" placeholder="G... destination" style="width:100%" />
+      <button type="button" id="wizScan">📷 Scan</button>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="wizardStep3" style="display:none;">
+      <label>Amount</label>
+      <input id="wizAmount" type="number" step="0.0000001" placeholder="e.g. 10" />
+    </div>
+
+    <!-- Step 4 -->
+    <div id="wizardStep4" style="display:none;">
+      <label>Memo (Optional)</label>
+      <input id="wizMemo" type="text" placeholder="Memo text or ID" />
+    </div>
+
+    <!-- Navigation -->
+    <div style="margin-top:15px; display:flex; justify-content:space-between;">
+      <button id="prevStep" disabled>Back</button>
+      <button id="nextStep">Next</button>
+    </div>
+  </div>
+</div> 
       <!-- Enhanced Trade Section -->
       <div class="card trade-card">
         <div class="trade-header">
@@ -2169,15 +2191,13 @@ async function loadWallet() {
           this.disabled = false;
         }
       });
-      
       document.getElementById('btnSendToggle').addEventListener('click', function() {
-        const sendForm = document.getElementById('sendForm');
-        if (sendForm.style.display === 'none' || sendForm.style.display === '') {
-          sendForm.style.display = 'block';
-        } else {
-          sendForm.style.display = 'none';
-        }
-      });
+    const sendWizard = document.getElementById('sendWizard');
+    sendWizard.style.display = 'flex'; // Had iyo jeer furan modal-ka
+    step = 1;
+    showStep(); // Muujin step 1
+});
+      
         
 // Event listener for the new Receive button
 document.getElementById('btnReceive').addEventListener('click', function() {
@@ -2219,79 +2239,81 @@ document.getElementById('btnReceive').addEventListener('click', function() {
     
     document.body.appendChild(receiveModal);
 });
-      
       document.getElementById('btnSend').addEventListener('click', async function() {
-        const asset = document.getElementById('sendAsset').value;
-        const amount = document.getElementById('sendAmount').value;
-        const destination = document.getElementById('sendDest').value;
-        const memo = document.getElementById('sendMemo').value;
-        
-        if (!amount || !destination) {
-          showError('Please fill in all fields.');
-          return;
-        }
-        
-        if (!currentKeypair) {
-          showError('Wallet not loaded.');
-          return;
-        }
-        
-        this.textContent = 'Sending...';
-        this.disabled = true;
-        
-        try {
-          const account = await server.loadAccount(currentKeypair.publicKey());
-          
-          let operation;
-          if (asset === 'XLM') {
+    const asset = document.getElementById('wizAsset').value;
+    const amount = document.getElementById('wizAmount').value;
+    const destination = document.getElementById('wizDest').value;
+    const memo = document.getElementById('wizMemo').value;
+
+    // ✅ Validation
+    if (!asset || (asset !== 'XLM' && asset !== 'LAAM')) {
+        showError('Please select a valid asset.');
+        return;
+    }
+    if (!amount) {
+        showError('Please enter the amount.');
+        return;
+    }
+    if (!destination) {
+        showError('Please enter the destination address.');
+        return;
+    }
+    if (!currentKeypair) {
+        showError('Wallet not loaded.');
+        return;
+    }
+
+    this.textContent = 'Sending...';
+    this.disabled = true;
+
+    try {
+        const account = await server.loadAccount(currentKeypair.publicKey());
+
+        let operation;
+        if (asset === 'XLM') {
             operation = StellarSdk.Operation.payment({
-              destination: destination,
-              asset: StellarSdk.Asset.native(),
-              amount: amount
+                destination,
+                asset: StellarSdk.Asset.native(),
+                amount
             });
-          } else if (asset === 'LAAM') {
+        } else {
             operation = StellarSdk.Operation.payment({
-              destination: destination,
-              asset: LAAM_ASSET,
-              amount: amount
+                destination,
+                asset: LAAM_ASSET,
+                amount
             });
-          }
-          
-          const transactionBuilder = new StellarSdk.TransactionBuilder(account, {
+        }
+
+        const transactionBuilder = new StellarSdk.TransactionBuilder(account, {
             fee: StellarSdk.BASE_FEE,
             networkPassphrase: StellarSdk.Networks.PUBLIC
-          });
+        }).addOperation(operation);
 
-          if (memo) {
-            transactionBuilder.addMemo(StellarSdk.Memo.text(memo));
-          }
+        if (memo) transactionBuilder.addMemo(StellarSdk.Memo.text(memo));
 
-          const transaction = transactionBuilder
-            .addOperation(operation)
-            .setTimeout(180)
-            .build();
+        const transaction = transactionBuilder.setTimeout(180).build();
+        transaction.sign(currentKeypair);
+
+        await server.submitTransaction(transaction);
+        showSuccess('Transaction sent successfully!');
+
+        // ✅ Reset wizard fields & close modal
+        document.getElementById('wizAmount').value = '';
+        document.getElementById('wizDest').value = '';
+        document.getElementById('wizMemo').value = '';
+        document.getElementById('sendWizard').style.display = 'none';
+
+        await updateBalanceDisplay();
+
+    } catch (error) {
+        console.error('Send transaction error:', error);
+        showError('Failed to send transaction: ' + error.message);
+    } finally {
+        this.textContent = 'Send Now';
+        this.disabled = false;
+    }
+});
           
-          transaction.sign(currentKeypair);
-          
-          const result = await server.submitTransaction(transaction);
-          
-          showSuccess('Transaction sent successfully!');
-          
-          document.getElementById('sendAmount').value = '';
-          document.getElementById('sendDest').value = '';
-          document.getElementById('sendMemo').value = '';
-          document.getElementById('sendForm').style.display = 'none';
-          
-          await updateBalanceDisplay();
-          
-        } catch (error) {
-          console.error('Send transaction error:', error);
-          showError('Failed to send transaction: ' + error.message);
-        } finally {
-          this.textContent = 'Send Now';
-          this.disabled = false;
-        }
-      });
         
       // Tab switching event listeners
       document.getElementById('overviewTab').addEventListener('click', () => switchTab('overview'));
