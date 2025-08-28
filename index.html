@@ -2289,7 +2289,8 @@ document.getElementById('btnReceive').addEventListener('click', function() {
     
     document.body.appendChild(receiveModal);
 });
-         
+       
+  <script>
   // --- Send Wizard Logic ---
   (function(){
     let current = 1;
@@ -2361,6 +2362,10 @@ document.getElementById('btnReceive').addEventListener('click', function() {
       if(e.target.classList.contains('wizard-prev')){ e.preventDefault(); prev(); }
     });
 
+    setTitle(1); setProgress(1);
+  })();
+  </script>  
+   
       // Tab switching event listeners
       document.getElementById('overviewTab').addEventListener('click', () => switchTab('overview'));
       document.getElementById('orderbookTab').addEventListener('click', () => switchTab('orderbook'));
