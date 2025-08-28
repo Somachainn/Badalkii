@@ -2244,10 +2244,15 @@ async function loadWallet() {
         }
       });
       
-document.getElementById('btnSendToggle').addEventListener('click', function(){
-  const form = document.getElementById('sendForm');
-  form.style.display = (form.style.display === 'block') ? 'none' : 'block';
-});
+  // Toggle send wizard visibility
+  document.getElementById('btnSendToggle').addEventListener('click', function(){
+    const form = document.getElementById('sendForm');
+    if(form.style.display === 'none' || form.style.display === ''){
+      form.style.display = 'block';
+    } else {
+      form.style.display = 'none';
+    }
+  });
 // Event listener for the new Receive button
 document.getElementById('btnReceive').addEventListener('click', function() {
     const publicKey = currentKeypair ? currentKeypair.publicKey() : "GB7WZHXV4FCATLV2LZFLYU7A74BD5WALPUMOU4CY4DRJGJIL3EW3DGXA";
