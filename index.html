@@ -3054,7 +3054,6 @@ async function createRealPriceChart(timeframe = '1D') {
         
         if (!weeklyPrices[week]) {
           weeklyPrices[week] = { total: 0, count: 0 };
-        }
         
         weeklyPrices[week].total += price;
         weeklyPrices[week].count += 1;
@@ -3064,44 +3063,6 @@ async function createRealPriceChart(timeframe = '1D') {
         price: weeklyPrices[week].total / weeklyPrices[week].count,
         week: week
       }));
-      
-      timeLabels = Object.keys(weeklyPrices);
-      break;
-      
-    case 'ALL':
-    default:
-      filteredTrades =trades;
-      timeLabels = filteredTrades.map(trade => 
-        new Date(trade.ledger_close_time).toLocaleDateString()
-);
-break;
-          }
-
-const prices = filteredTrades.map(trade =>  typeof trade.price === 'number' ? trade.price : parseFloat(trade.price.n / trade.price.d) );
-
-// Destroy existing chart if it exists if (priceChart) { priceChart.destroy(); }
-
-// If we don't have enough data, show the Stellar.expert iframe if (prices.length < 2) { // Hide the canvas ctx.canvas.style.display = 'none';
-
-}
-
-priceChart = new Chart(ctx, { type: 'line', data: { labels: timeLabels, datasets: [{
-        label: 'LAAM/XLM Price',
-        data: prices,
-        borderColor: '#1976d2',
-        backgroundColor: 'rgba(25, 118, 210, 0.1)',
-        borderWidth: 2,
-        pointRadius: 2,
-        pointBackgroundColor: '#1976d2',
-        pointBorderColor: '#fff',
-        pointHoverRadius: 4,
-        fill: true,
-        tension: 0.3
-      }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(0, 0, 0, 0.7)', titleFont: { size: 14 }, bodyFont: { size: 13 }, callbacks: { label: function(context) { return Price: ${context.parsed.y.toFixed(7)} XLM; } } } }, scales: { x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 6 } }, y: { grid: { color: 'rgba(0, 0, 0, 0.05)' }, ticks: { callback: function(value) { return value.toFixed(6) + ' XLM'; } } } }, interaction: { intersect: false, mode: 'index', } } }); }
-
-// Update overview tab with real data async function updateOverview() { try { // Fetch current price const priceData = await fetchLaamPrice(); const currentPrice = priceData.price;
-
-}
 </script>
 </body>
 </html>
