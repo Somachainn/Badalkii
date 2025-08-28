@@ -2289,7 +2289,78 @@ document.getElementById('btnReceive').addEventListener('click', function() {
     
     document.body.appendChild(receiveModal);
 });
-   
+         
+  // --- Send Wizard Logic ---
+  (function(){
+    let current = 1;
+    const total = 5;
+    const steps = Array.from(document.querySelectorAll('#sendWizard .wizard-step'));
+    const title = document.getElementById('wizardStepTitle');
+    const bar = document.getElementById('wizardBar');
+
+    function setTitle(n){
+      const labels = {
+        1: 'Step 1 of 5 — Choose Asset',
+        2: 'Step 2 of 5 — Enter Amount',
+        3: 'Step 3 of 5 — Destination',
+        4: 'Step 4 of 5 — Memo (optional)',
+        5: 'Step 5 of 5 — Review & Send'
+      };
+      title.textContent = labels[n] || ('Step ' + n);
+    }
+
+    function setProgress(n){
+      const pct = (n-1) / (total-1) * 100;
+      bar.style.width = pct + '%';
+    }
+
+    function showStep(n){
+      steps.forEach(s => s.classList.remove('active'));
+      const el = steps.find(s => Number(s.dataset.step) === n);
+      if(el) el.classList.add('active');
+      current = n;
+      setTitle(n); setProgress(n);
+      if(n === 5){
+        document.getElementById('revAsset').textContent = document.getElementById('sendAsset').value;
+        document.getElementById('revAmount').textContent = document.getElementById('sendAmount').value || '-';
+        document.getElementById('revDest').textContent = document.getElementById('sendDest').value || '-';
+        const memo = document.getElementById('sendMemo').value;
+        document.getElementById('revMemo').textContent = memo ? memo : '—';
+      }
+    }
+
+    function clearErrors(){
+      ['errStep1','errStep2','errStep3'].forEach(id => {
+        const e = document.getElementById(id); if(e) e.textContent='';
+      });
+    }
+
+    function validate(n){
+      clearErrors();
+      if(n===1){
+        const v = (document.getElementById('sendAsset').value || '').trim();
+        if(!v){ document.getElementById('errStep1').textContent = 'Please choose an asset.'; return false; }
+      }
+      if(n===2){
+        const amt = Number(document.getElementById('sendAmount').value);
+        if(!(amt>0)){ document.getElementById('errStep2').textContent = 'Amount must be greater than 0.'; return false; }
+      }
+      if(n===3){
+        const dest = (document.getElementById('sendDest').value || '').trim();
+        const re = /^G[A-Z2-7]{55}$/;
+        if(!re.test(dest)){ document.getElementById('errStep3').textContent = 'Enter a valid Stellar public key.'; return false; }
+      }
+      return true;
+    }
+
+    function next(){ if(validate(current)) showStep(Math.min(total, current+1)); }
+    function prev(){ showStep(Math.max(1, current-1)); }
+
+    document.addEventListener('click', function(e){
+      if(e.target.classList.contains('wizard-next')){ e.preventDefault(); next(); }
+      if(e.target.classList.contains('wizard-prev')){ e.preventDefault(); prev(); }
+    });
+
       // Tab switching event listeners
       document.getElementById('overviewTab').addEventListener('click', () => switchTab('overview'));
       document.getElementById('orderbookTab').addEventListener('click', () => switchTab('orderbook'));
@@ -2771,84 +2842,8 @@ async function updateOverview() {
     
     createPriceChart(); // Fallback to sample chart
   }
-}    
-      <!-- Scripts kale halkan haddii jiraan -->
+}   
 
-  <script>
-  // --- Send Wizard Logic ---
-  (function(){
-    let current = 1;
-    const total = 5;
-    const steps = Array.from(document.querySelectorAll('#sendWizard .wizard-step'));
-    const title = document.getElementById('wizardStepTitle');
-    const bar = document.getElementById('wizardBar');
-
-    function setTitle(n){
-      const labels = {
-        1: 'Step 1 of 5 — Choose Asset',
-        2: 'Step 2 of 5 — Enter Amount',
-        3: 'Step 3 of 5 — Destination',
-        4: 'Step 4 of 5 — Memo (optional)',
-        5: 'Step 5 of 5 — Review & Send'
-      };
-      title.textContent = labels[n] || ('Step ' + n);
-    }
-
-    function setProgress(n){
-      const pct = (n-1) / (total-1) * 100;
-      bar.style.width = pct + '%';
-    }
-
-    function showStep(n){
-      steps.forEach(s => s.classList.remove('active'));
-      const el = steps.find(s => Number(s.dataset.step) === n);
-      if(el) el.classList.add('active');
-      current = n;
-      setTitle(n); setProgress(n);
-      if(n === 5){
-        document.getElementById('revAsset').textContent = document.getElementById('sendAsset').value;
-        document.getElementById('revAmount').textContent = document.getElementById('sendAmount').value || '-';
-        document.getElementById('revDest').textContent = document.getElementById('sendDest').value || '-';
-        const memo = document.getElementById('sendMemo').value;
-        document.getElementById('revMemo').textContent = memo ? memo : '—';
-      }
-    }
-
-    function clearErrors(){
-      ['errStep1','errStep2','errStep3'].forEach(id => {
-        const e = document.getElementById(id); if(e) e.textContent='';
-      });
-    }
-
-    function validate(n){
-      clearErrors();
-      if(n===1){
-        const v = (document.getElementById('sendAsset').value || '').trim();
-        if(!v){ document.getElementById('errStep1').textContent = 'Please choose an asset.'; return false; }
-      }
-      if(n===2){
-        const amt = Number(document.getElementById('sendAmount').value);
-        if(!(amt>0)){ document.getElementById('errStep2').textContent = 'Amount must be greater than 0.'; return false; }
-      }
-      if(n===3){
-        const dest = (document.getElementById('sendDest').value || '').trim();
-        const re = /^G[A-Z2-7]{55}$/;
-        if(!re.test(dest)){ document.getElementById('errStep3').textContent = 'Enter a valid Stellar public key.'; return false; }
-      }
-      return true;
-    }
-
-    function next(){ if(validate(current)) showStep(Math.min(total, current+1)); }
-    function prev(){ showStep(Math.max(1, current-1)); }
-
-    document.addEventListener('click', function(e){
-      if(e.target.classList.contains('wizard-next')){ e.preventDefault(); next(); }
-      if(e.target.classList.contains('wizard-prev')){ e.preventDefault(); prev(); }
-    });
-
-    setTitle(1); setProgress(1);
-  })();
-  </script>
 </script>             
 </body>
 </html>
