@@ -1,430 +1,1113 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="so">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Laam P2P Demo oo la Hagaajiyay</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoSomali P2P Exchange</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #007bff;
-            --primary-hover: #0056b3;
-            --background-color: #f8f9fa;
-            --card-background: #ffffff;
-            --text-color: #212529;
-            --muted-color: #6c757d;
-            --border-color: #dee2e6;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border: #334155;
+            --success: #22c55e;
+            --error: #ef4444;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
-        html, body {
-            height: 100%;
+
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
+
         .container {
-            max-width: 1100px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 24px;
+            padding: 0 20px;
         }
-        header {
+
+        /* Header */
+        .header {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
             display: flex;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
         }
-        .logo {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--primary-color), #4dabf7);
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: 700;
-            font-size: 24px;
+            font-weight: bold;
         }
-        h1 {
-            font-size: 24px;
-            margin: 0;
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
         }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 24px;
-        }
-        @media (min-width: 992px) {
-            .grid {
-                grid-template-columns: 400px 1fr;
-            }
-        }
-        .card {
-            background: var(--card-background);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-        }
-        label {
-            display: block;
-            font-size: 14px;
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
             font-weight: 500;
-            margin-top: 12px;
-            margin-bottom: 6px;
+            transition: color 0.3s ease;
         }
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wallet-balance {
+            background: var(--surface);
+            padding: 8px 16px;
             border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-size: 14px;
-            box-sizing: border-box;
+            font-size: 0.9rem;
+            border: 1px solid var(--border);
         }
-        button {
+
+        /* Main Content */
+        .main {
+            margin-top: 80px;
+            padding: 2rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: var(--gradient);
+            margin: -2rem -20px 3rem -20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Trading Interface */
+        .trading-interface {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .order-book {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .order-form {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .order-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: var(--surface-light);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab.active {
             background: var(--primary-color);
             color: white;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            width: 100%;
             padding: 12px 16px;
+            border: 1px solid var(--border);
             border-radius: 8px;
-            border: 0;
+            background: var(--background);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--background);
+            color: var(--text-primary);
+            font-size: 1rem;
             cursor: pointer;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
             font-weight: 600;
-            transition: background-color 0.2s;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        button:hover {
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
             background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
-        .muted {
-            color: var(--muted-color);
-            font-size: 13px;
+
+        .btn-success {
+            background: var(--secondary-color);
+            color: white;
         }
-        .orders-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
         }
-        .order {
+
+        .btn-full {
+            width: 100%;
+        }
+
+        /* Order Book */
+        .order-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .order-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 16px;
-            border-radius: 12px;
-            border: 1px solid #e9ecef;
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.3s ease;
         }
-        .pill {
-            background: #e7f5ff;
-            color: var(--primary-color);
-            padding: 6px 12px;
-            border-radius: 999px;
+
+        .order-item:hover {
+            background: var(--surface-light);
+        }
+
+        .order-info {
+            flex: 1;
+        }
+
+        .order-type {
             font-weight: 600;
-            font-size: 14px;
+            margin-bottom: 4px;
         }
-        .auth-form {
-            margin-top: 12px;
+
+        .order-type.buy {
+            color: var(--secondary-color);
         }
-        #adminPanel {
-            display: none; /* Hidden by default */
+
+        .order-type.sell {
+            color: var(--danger-color);
         }
-        .hidden {
+
+        .order-details {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .order-amount {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .order-price {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Statistics */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Modal */
+        .modal {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
         }
-        #auth-buttons button {
-            flex-grow: 1;
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
         }
-        .btn-secondary {
-            background: #f1f3f5;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
         }
-        .btn-secondary:hover {
-            background: #e9ecef;
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
         }
-        .btn-approve {
-            background-color: var(--success-color);
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 4px;
         }
-        .btn-reject {
-            background-color: var(--danger-color);
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .trading-interface {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Status indicators */
+        .status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status.active {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+        }
+
+        .status.pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning-color);
+        }
+
+        .status.completed {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary-color);
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <header>
-        <div class="logo">L</div>
-        <div>
-            <h1>Laam P2P Demo</h1>
-            <div class="muted">Isweydaarsiga ETB / USDT</div>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <div class="logo-icon">CS</div>
+                    <span>CryptoSomali</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#trading">Ganacsiga</a></li>
+                    <li><a href="#orders">Dalabyada</a></li>
+                    <li><a href="#wallet">Jeebka</a></li>
+                    <li><a href="#history">Taariikh</a></li>
+                </ul>
+                <div class="user-section">
+                    <div class="wallet-balance" id="walletBalance">
+                        <span>Jeebka: </span>
+                        <span id="balanceAmount">0.00 USDT</span>
+                    </div>
+                    <button class="btn btn-primary" id="connectWallet">Xidh Jeebka</button>
+                    <button class="btn btn-primary" id="loginBtn" style="display: none;">Soo Gal</button>
+                </div>
+            </nav>
         </div>
     </header>
 
-    <div class="grid">
-        <!-- Left Column -->
-        <div>
-            <div class="card" id="authCard">
-                <h3>Soo Gal / Isdiiwaangeli</h3>
-                <div class="auth-form">
-                    <input type="email" id="authEmail" placeholder="Email-kaaga" required />
-                    <input type="password" id="authPassword" placeholder="Eraygaaga sirta ah" required style="margin-top: 8px;" />
-                    <div id="auth-buttons" style="display:flex;gap:8px;margin-top:12px">
-                        <button id="btnLogin">Soo Gal</button>
-                        <button id="btnRegister">Isdiiwaangeli</button>
-                    </div>
-                    <div id="authStatus" class="muted" style="margin-top:8px"></div>
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>P2P Crypto Exchange</h1>
+                    <p>Isweydaarsi ammaan ah oo degdeg ah oo loogu talagalay cryptocurrency-ga. Iibi ama iibso Bitcoin, USDT, iyo kuwo kale si toos ah.</p>
+                    <button class="btn btn-primary btn-lg" id="startTradingBtn">Bilow Ganacsiga</button>
                 </div>
-            </div>
+            </section>
 
-            <div class="card" id="userSection" style="margin-top: 24px; display: none;">
-                 <div style="display:flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <strong id="welcomeMsg">Ku soo dhawoow!</strong>
-                        <div class="muted small">Jeebkaaga: <span id="walletAddr">Lama xidhin</span></div>
-                    </div>
-                    <button id="btnLogout" class="btn-secondary">Ka Bax</button>
+            <!-- Statistics -->
+            <section class="stats fade-in">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalVolume">$2.5M</div>
+                    <div class="stat-label">Wadarta Ganacsiga 24h</div>
                 </div>
-            </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeOrders">156</div>
+                    <div class="stat-label">Dalabyo Firfircoon</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalUsers">2,847</div>
+                    <div class="stat-label">Isticmaalayaal Diiwaangashan</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgTime">3.2min</div>
+                    <div class="stat-label">Celceliska Waqtiga Ganacsiga</div>
+                </div>
+            </section>
 
-            <div class="card" id="orderCard" style="margin-top: 24px;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <strong>Samee Dalab Cusub</strong>
-                    <button id="btnConnect">Xidh Jeebka</button>
-                </div>
-                <form id="orderForm" style="margin-top:12px">
-                    <label for="order_type">Nooca Dalabka</label>
-                    <select id="order_type">
-                        <option value="sell">Iibi USDT (Hel ETB)</option>
-                        <option value="buy">Iibso USDT (Bixi ETB)</option>
-                    </select>
-                    <label for="amount">Lacagta (USDT)</label>
-                    <input id="amount" type="number" step="0.01" value="10" required />
-                    <label for="price">Qiimaha (ETB halkii USDT)</label>
-                    <input id="price" type="number" step="0.01" value="60.00" required />
-                    <label for="payment_method">Habka Lacag Bixinta</label>
-                    <select id="payment_method">
-                        <option>Telebirr</option>
-                        <option>CBE Birr</option>
-                        <option>Xawaalad Bangi</option>
-                    </select>
-                    <div style="margin-top:12px;display:flex;gap:8px">
-                        <button type="submit">Dalbo Hadda</button>
-                        <button id="btnRefresh" type="button" class="btn-secondary">Dib u cusboonaysii</button>
+            <!-- Trading Interface -->
+            <section class="trading-interface fade-in" id="trading">
+                <!-- Order Book -->
+                <div class="order-book">
+                    <h2 class="section-title">Dalabyada Suuqa</h2>
+                    <div class="order-tabs">
+                        <button class="tab active" data-filter="all">Dhammaan</button>
+                        <button class="tab" data-filter="buy">Iibso</button>
+                        <button class="tab" data-filter="sell">Iibi</button>
                     </div>
-                </form>
-            </div>
+                    <div class="order-list" id="orderList">
+                        <!-- Orders will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Order Form -->
+                <div class="order-form">
+                    <h2 class="section-title">Samee Dalab</h2>
+                    <div class="order-tabs">
+                        <button class="tab active" id="buyTab">Iibso</button>
+                        <button class="tab" id="sellTab">Iibi</button>
+                    </div>
+                    
+                    <form id="orderForm">
+                        <div class="form-group">
+                            <label class="form-label">Cryptocurrency</label>
+                            <select class="form-select" id="cryptoSelect">
+                                <option value="USDT">USDT (Tether)</option>
+                                <option value="BTC">BTC (Bitcoin)</option>
+                                <option value="ETH">ETH (Ethereum)</option>
+                                <option value="BNB">BNB (Binance Coin)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Lacagta (Amount)</label>
+                            <input type="number" class="form-input" id="amountInput" placeholder="0.00" step="0.01" min="0.01" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Qiimaha (ETB)</label>
+                            <input type="number" class="form-input" id="priceInput" placeholder="0.00" step="0.01" min="0.01" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Habka Lacag Bixinta</label>
+                            <select class="form-select" id="paymentMethod">
+                                <option value="telebirr">Telebirr</option>
+                                <option value="cbe">CBE Birr</option>
+                                <option value="awash">Awash Bank</option>
+                                <option value="dashen">Dashen Bank</option>
+                                <option value="abyssinia">Abyssinia Bank</option>
+                                <option value="ebirr">eBirr</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Macluumaadka Lacag Bixinta</label>
+                            <input type="text" class="form-input" id="paymentInfo" placeholder="Lambarka telefoonka ama akoonka" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full" id="submitOrder">
+                            <span id="orderButtonText">Samee Dalabka</span>
+                            <div class="loading" id="orderLoading" style="display: none;"></div>
+                        </button>
+                    </form>
+
+                    <div class="form-group" style="margin-top: 2rem;">
+                        <div style="background: var(--surface-light); padding: 1rem; border-radius: 8px;">
+                            <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Wadarta Guud:</div>
+                            <div style="font-size: 1.2rem; font-weight: 600;" id="totalAmount">0.00 ETB</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
+    </main>
 
-        <!-- Right Column -->
-        <div>
-            <div class="card">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                    <strong>Dalabyada Furan</strong>
-                    <div class="muted">Shaandhee: 
-                        <select id="filterType" style="width: auto;">
-                            <option value="all">Dhammaan</option>
-                            <option value="buy">Iibso</option>
-                            <option value="sell">Iibi</option>
-                        </select>
-                    </div>
-                </div>
-                <div id="orders" class="orders-list" style="margin-top:12px;max-height:520px;overflow:auto"></div>
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">So Gal / Isdiiwaangeli</h3>
+                <button class="close-btn" id="closeLoginModal">&times;</button>
             </div>
+            <form id="authForm">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="emailInput" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Erayga Sirta ah</label>
+                    <input type="password" class="form-input" id="passwordInput" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-full" id="authSubmit">Soo Gal</button>
+                </div>
+                <div style="text-align: center; margin-top: 1rem;">
+                    <span style="color: var(--text-muted);">Ma lihid akoon? </span>
+                    <a href="#" id="toggleAuth" style="color: var(--primary-color);">Isdiiwaangeli</a>
+                </div>
+            </form>
+        </div>
+    </div>
 
-            <div class="card" id="adminPanel" style="margin-top: 24px;">
-                <strong>Qaybta Maamulka (Admin Panel)</strong>
-                <div class="muted">Ansixi ama diid dalabyada la xaqiijinayo</div>
-                <div id="adminOrders" class="orders-list" style="margin-top:12px;max-height:400px;overflow:auto"></div>
+    <!-- Order Details Modal -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Faahfaahinta Dalabka</h3>
+                <button class="close-btn" id="closeOrderModal">&times;</button>
+            </div>
+            <div id="orderDetails">
+                <!-- Order details will be populated by JavaScript -->
             </div>
         </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/index.min.js"></script>
-<script>
-    // --- KU QOR HALKAN MACLUUMAADKAAGA SUPABASE ---
-    const SUPABASE_URL = 'https://uxjcwspliszzccmoaigo.supabase.co'; // Beddel URL-kaaga
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4amN3c3BsaXN6emNjbW9haWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0NzU5NjYsImV4cCI6MjA3MjA1MTk2Nn0.wVWGwCSDFbBArzbmNCVZwVGvoSeWIcIhlAfA9YO6Pzg'; // Beddel furahaaga
-    
-    // --- Xulashada Qaybaha HTML (DOM Elements) ---
-    const { createClient } = supabase;
-    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <script>
+        // Global variables
+        let currentUser = null;
+        let orders = [];
+        let currentFilter = 'all';
+        let orderType = 'buy';
+        let isAuthenticated = false;
 
-    const authEmail = document.getElementById('authEmail');
-    const authPassword = document.getElementById('authPassword');
-    const btnLogin = document.getElementById('btnLogin');
-    const btnRegister = document.getElementById('btnRegister');
-    const btnLogout = document.getElementById('btnLogout');
-    const authStatus = document.getElementById('authStatus');
-    const authCard = document.getElementById('authCard');
-    const userSection = document.getElementById('userSection');
-    const welcomeMsg = document.getElementById('welcomeMsg');
-    const adminPanel = document.getElementById('adminPanel');
-    const ordersEl = document.getElementById('orders');
-    const adminOrdersEl = document.getElementById('adminOrders');
-    const orderForm = document.getElementById('orderForm');
-    const filterType = document.getElementById('filterType');
-    
-    let currentUser = null;
-    const ADMIN_ROLE = 'admin'; // Magaca doorka maamulka ee Supabase
-
-    // --- Hawlaha Xaqiijinta Isticmaalaha (Authentication Functions) ---
-    async function loginUser() {
-        const email = authEmail.value.trim();
-        const password = authPassword.value.trim();
-        if (!email || !password) {
-            authStatus.textContent = 'Fadlan geli email iyo eray sir ah.';
-            return;
-        }
-        authStatus.textContent = 'Waa la socodsiiyaa...';
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
-        if (error) {
-            authStatus.textContent = `Cilad ayaa dhacday: ${error.message}`;
-        } else {
-            authStatus.textContent = '';
-            checkUserSession();
-        }
-    }
-
-    async function registerUser() {
-        const email = authEmail.value.trim();
-        const password = authPassword.value.trim();
-        if (!email || !password) {
-            authStatus.textContent = 'Fadlan geli email iyo eray sir ah.';
-            return;
-        }
-        authStatus.textContent = 'Diiwaangelin ayaa socota...';
-        const { data, error } = await sb.auth.signUp({ email, password });
-        if (error) {
-            authStatus.textContent = `Cilad diiwaangelin: ${error.message}`;
-        } else {
-            authStatus.textContent = 'Si guul leh ayaa lagu diiwaangeliyey! Fadlan soo gal.';
-            authEmail.value = '';
-            authPassword.value = '';
-        }
-    }
-
-    async function logoutUser() {
-        await sb.auth.signOut();
-        currentUser = null;
-        updateUI();
-    }
-
-    // --- Hubinta Isticmaalaha iyo Cusboonaysiinta UI ---
-    async function checkUserSession() {
-        const { data: { session } } = await sb.auth.getSession();
-        if (session) {
-            currentUser = session.user;
-            // Si loo hubiyo doorka maamulka, waxaad u baahan tahay inaad akhrido sheegashooyinka JWT
-            const claims = session.user.user_metadata; // Ama meesha aad ku kaydiso doorka
-            if (claims && claims.role === ADMIN_ROLE) {
-                adminPanel.style.display = 'block';
-                loadAdminOrders();
-            } else {
-                adminPanel.style.display = 'none';
+        // Sample data
+        const sampleOrders = [
+            {
+                id: 1,
+                type: 'sell',
+                crypto: 'USDT',
+                amount: 100,
+                price: 58.50,
+                paymentMethod: 'Telebirr',
+                user: 'Ahmed123',
+                status: 'active',
+                created: new Date()
+            },
+            {
+                id: 2,
+                type: 'buy',
+                crypto: 'USDT',
+                amount: 250,
+                price: 58.75,
+                paymentMethod: 'CBE Birr',
+                user: 'Fatima456',
+                status: 'active',
+                created: new Date()
+            },
+            {
+                id: 3,
+                type: 'sell',
+                crypto: 'BTC',
+                amount: 0.01,
+                price: 2850000,
+                paymentMethod: 'Awash Bank',
+                user: 'Mohamed789',
+                status: 'active',
+                created: new Date()
+            },
+            {
+                id: 4,
+                type: 'buy',
+                crypto: 'ETH',
+                amount: 0.5,
+                price: 185000,
+                paymentMethod: 'eBirr',
+                user: 'Khadija321',
+                status: 'active',
+                created: new Date()
+            },
+            {
+                id: 5,
+                type: 'sell',
+                crypto: 'USDT',
+                amount: 500,
+                price: 58.25,
+                paymentMethod: 'Dashen Bank',
+                user: 'Omar654',
+                status: 'active',
+                created: new Date()
             }
-        } else {
-            currentUser = null;
-        }
-        updateUI();
-        loadOrders();
-    }
+        ];
 
-    function updateUI() {
-        if (currentUser) {
-            authCard.style.display = 'none';
-            userSection.style.display = 'block';
-            welcomeMsg.textContent = `Ku soo dhawoow, ${currentUser.email.split('@')[0]}`;
-        } else {
-            authCard.style.display = 'block';
-            userSection.style.display = 'none';
-            adminPanel.style.display = 'none';
-        }
-    }
-
-    // --- Hawlaha Dalabyada (Order Functions) ---
-    async function loadOrders() {
-        ordersEl.innerHTML = '<div class="muted">Waa la soo shubayaa dalabyada...</div>';
-        let query = sb.from('orders').select('*').eq('status', 'open').order('created_at', { ascending: false });
-        
-        if (filterType.value !== 'all') {
-            query = query.eq('order_type', filterType.value);
-        }
-
-        const { data, error } = await query;
-
-        if (error) {
-            ordersEl.innerHTML = `<div class="muted" style="color: var(--danger-color);">Cilad: ${error.message}</div>`;
-            return;
-        }
-        if (!data || data.length === 0) {
-            ordersEl.innerHTML = '<div class="muted">Wali ma jiraan dalabyo furan.</div>';
-            return;
-        }
-
-        ordersEl.innerHTML = '';
-        data.forEach(o => {
-            const div = document.createElement('div');
-            div.className = 'order';
-            const typeClass = o.order_type === 'buy' ? 'success' : 'danger';
-            div.innerHTML = `
-                <div>
-                    <div style="font-weight: 700; color: var(--${typeClass}-color);">${o.order_type.toUpperCase()} USDT</div>
-                    <div class="muted small">Habka: ${o.payment_method}</div>
-                </div>
-                <div style="text-align: right;">
-                    <div class="pill">${Number(o.amount).toLocaleString()} USDT</div>
-                    <div class="muted small">Qiimaha: ${Number(o.price).toLocaleString()} ETB</div>
-                </div>
-            `;
-            ordersEl.appendChild(div);
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupEventListeners();
+            loadOrders();
+            updateStats();
         });
-    }
-    
-    async function loadAdminOrders() {
-        // Kani waa tusaale, waxaad u baahan tahay inaad ku darto habka xaqiijinta rasiidhada
-        adminOrdersEl.innerHTML = '<div class="muted">Wali ma jiraan dalabyo u baahan ansixin.</div>';
-    }
 
-    async function postOrder(e) {
-        e.preventDefault();
-        if (!currentUser) {
-            alert('Fadlan soo gal si aad u dalbato.');
-            return;
+        function initializeApp() {
+            // Check if user is logged in (simulate with localStorage)
+            const savedUser = localStorage.getItem('cryptosomali_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                isAuthenticated = true;
+                updateUserInterface();
+            }
+
+            // Initialize orders with sample data
+            orders = [...sampleOrders];
         }
-        const formData = new FormData(orderForm);
-        const orderData = {
-            user_id: currentUser.id,
-            order_type: document.getElementById('order_type').value,
-            amount: document.getElementById('amount').value,
-            price: document.getElementById('price').value,
-            payment_method: document.getElementById('payment_method').value,
-            status: 'open',
-            asset: 'USDT',
-            fiat_currency: 'ETB'
-        };
 
-        const { error } = await sb.from('orders').insert([orderData]);
-        if (error) {
-            alert(`Cilad ayaa dhacday: ${error.message}`);
-        } else {
-            alert('Dalabkaaga si guul leh ayaa loo gudbiyey!');
-            orderForm.reset();
+        function setupEventListeners() {
+            // Order form
+            document.getElementById('orderForm').addEventListener('submit', handleOrderSubmit);
+            
+            // Order type tabs
+            document.getElementById('buyTab').addEventListener('click', () => setOrderType('buy'));
+            document.getElementById('sellTab').addEventListener('click', () => setOrderType('sell'));
+            
+            // Filter tabs
+            document.querySelectorAll('.tab[data-filter]').forEach(tab => {
+                tab.addEventListener('click', (e) => setFilter(e.target.dataset.filter));
+            });
+            
+            // Authentication
+            document.getElementById('loginBtn').addEventListener('click', showLoginModal);
+            document.getElementById('connectWallet').addEventListener('click', handleWalletConnect);
+            document.getElementById('authForm').addEventListener('submit', handleAuth);
+            document.getElementById('toggleAuth').addEventListener('click', toggleAuthMode);
+            
+            // Modals
+            document.getElementById('closeLoginModal').addEventListener('click', hideLoginModal);
+            document.getElementById('closeOrderModal').addEventListener('click', hideOrderModal);
+            
+            // Calculate total amount
+            document.getElementById('amountInput').addEventListener('input', calculateTotal);
+            document.getElementById('priceInput').addEventListener('input', calculateTotal);
+            
+            // Start trading button
+            document.getElementById('startTradingBtn').addEventListener('click', () => {
+                document.getElementById('trading').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        function setOrderType(type) {
+            orderType = type;
+            document.getElementById('buyTab').classList.toggle('active', type === 'buy');
+            document.getElementById('sellTab').classList.toggle('active', type === 'sell');
+            
+            const submitBtn = document.getElementById('submitOrder');
+            const buttonText = document.getElementById('orderButtonText');
+            
+            if (type === 'buy') {
+                submitBtn.className = 'btn btn-success btn-full';
+                buttonText.textContent = 'Samee Dalabka Iibsashada';
+            } else {
+                submitBtn.className = 'btn btn-danger btn-full';
+                buttonText.textContent = 'Samee Dalabka Iibinta';
+            }
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.tab[data-filter]').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.filter === filter);
+            });
             loadOrders();
         }
-    }
 
-    // --- Dhageystayaasha Dhacdooyinka (Event Listeners) ---
-    document.addEventListener('DOMContentLoaded', checkUserSession);
-    btnLogin.addEventListener('click', loginUser);
-    btnRegister.addEventListener('click', registerUser);
-    btnLogout.addEventListener('click', logoutUser);
-    orderForm.addEventListener('submit', postOrder);
-    filterType.addEventListener('change', loadOrders);
-    document.getElementById('btnRefresh').addEventListener('click', loadOrders);
+        function loadOrders() {
+            const orderList = document.getElementById('orderList');
+            let filteredOrders = orders;
+            
+            if (currentFilter !== 'all') {
+                filteredOrders = orders.filter(order => order.type === currentFilter);
+            }
+            
+            if (filteredOrders.length === 0) {
+                orderList.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        <p>Wali ma jiraan dalabyo ${currentFilter === 'all' ? '' : currentFilter === 'buy' ? 'iibsashada' : 'iibinta'}.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            orderList.innerHTML = filteredOrders.map(order => `
+                <div class="order-item" onclick="showOrderDetails(${order.id})">
+                    <div class="order-info">
+                        <div class="order-type ${order.type}">${order.type === 'buy' ? 'IIBSO' : 'IIBI'} ${order.crypto}</div>
+                        <div class="order-details">${order.paymentMethod} • ${order.user}</div>
+                    </div>
+                    <div class="order-amount">
+                        <div>${order.amount} ${order.crypto}</div>
+                        <div class="order-price">${order.price.toLocaleString()} ETB</div>
+                    </div>
+                    <div class="status ${order.status}">${order.status === 'active' ? 'Firfircoon' : order.status}</div>
+                </div>
+            `).join('');
+        }
 
-</script>
+        function handleOrderSubmit(e) {
+            e.preventDefault();
+            
+            if (!isAuthenticated) {
+                showLoginModal();
+                return;
+            }
+            
+            const formData = new FormData(e.target);
+            const orderData = {
+                id: orders.length + 1,
+                type: orderType,
+                crypto: formData.get('crypto') || document.getElementById('cryptoSelect').value,
+                amount: parseFloat(document.getElementById('amountInput').value),
+                price: parseFloat(document.getElementById('priceInput').value),
+                paymentMethod: document.getElementById('paymentMethod').value,
+                paymentInfo: document.getElementById('paymentInfo').value,
+                user: currentUser.username,
+                status: 'active',
+                created: new Date()
+            };
+            
+            // Show loading
+            document.getElementById('orderLoading').style.display = 'block';
+            document.getElementById('orderButtonText').textContent = 'Waa la sameynayaa...';
+            
+            // Simulate API call
+            setTimeout(() => {
+                orders.unshift(orderData);
+                loadOrders();
+                updateStats();
+                
+                // Reset form
+                document.getElementById('orderForm').reset();
+                calculateTotal();
+                
+                // Hide loading
+                document.getElementById('orderLoading').style.display = 'none';
+                setOrderType(orderType); // Reset button text
+                
+                // Show success message
+                alert('Dalabkaaga si guul leh ayaa loo sameeyay!');
+            }, 2000);
+        }
+
+        function calculateTotal() {
+            const amount = parseFloat(document.getElementById('amountInput').value) || 0;
+            const price = parseFloat(document.getElementById('priceInput').value) || 0;
+            const total = amount * price;
+            
+            document.getElementById('totalAmount').textContent = `${total.toLocaleString()} ETB`;
+        }
+
+        function showOrderDetails(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+            
+            const modal = document.getElementById('orderModal');
+            const details = document.getElementById('orderDetails');
+            
+            details.innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <span style="font-weight: 600; font-size: 1.2rem;" class="order-type ${order.type}">
+                            ${order.type === 'buy' ? 'IIBSO' : 'IIBI'} ${order.crypto}
+                        </span>
+                        <span class="status ${order.status}">${order.status === 'active' ? 'Firfircoon' : order.status}</span>
+                    </div>
+                    
+                    <div style="background: var(--surface-light); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <div style="color: var(--text-muted); font-size: 0.9rem;">Lacagta</div>
+                                <div style="font-weight: 600;">${order.amount} ${order.crypto}</div>
+                            </div>
+                            <div>
+                                <div style="color: var(--text-muted); font-size: 0.9rem;">Qiimaha</div>
+                                <div style="font-weight: 600;">${order.price.toLocaleString()} ETB</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Habka Lacag Bixinta</div>
+                        <div style="font-weight: 600;">${order.paymentMethod}</div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Isticmaale</div>
+                        <div style="font-weight: 600;">${order.user}</div>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Waqtiga la sameeyay</div>
+                        <div style="font-weight: 600;">${order.created.toLocaleString('so-SO')}</div>
+                    </div>
+                    
+                    ${isAuthenticated && currentUser.username !== order.user ? `
+                        <button class="btn btn-primary btn-full" onclick="initiateTradeChat(${order.id})">
+                            Bilow Ganacsiga
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        function initiateTradeChat(orderId) {
+            alert('Ganacsigu waa bilaabmay! Waxaad la xiriiri kartaa iibiyaha si aad u dhammaysato ganacsiga.');
+            hideOrderModal();
+        }
+
+        function handleWalletConnect() {
+            if (!isAuthenticated) {
+                showLoginModal();
+                return;
+            }
+            
+            // Simulate wallet connection
+            alert('Jeebka waa la xidhay si guul leh!');
+            document.getElementById('balanceAmount').textContent = '1,250.00 USDT';
+        }
+
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function hideLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        function hideOrderModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const isLogin = document.getElementById('authSubmit').textContent === 'Soo Gal';
+            
+            // Simulate authentication
+            setTimeout(() => {
+                const user = {
+                    id: Date.now(),
+                    email: email,
+                    username: email.split('@')[0]
+                };
+                
+                currentUser = user;
+                isAuthenticated = true;
+                localStorage.setItem('cryptosomali_user', JSON.stringify(user));
+                
+                updateUserInterface();
+                hideLoginModal();
+                
+                alert(isLogin ? 'Si guul leh ayaad u soo gashay!' : 'Akoonkaaga waa la sameeyay!');
+            }, 1000);
+        }
+
+        function toggleAuthMode() {
+            const submitBtn = document.getElementById('authSubmit');
+            const toggleLink = document.getElementById('toggleAuth');
+            
+            if (submitBtn.textContent === 'Soo Gal') {
+                submitBtn.textContent = 'Isdiiwaangeli';
+                toggleLink.textContent = 'Soo Gal';
+                document.querySelector('.modal-title').textContent = 'Isdiiwaangeli';
+            } else {
+                submitBtn.textContent = 'Soo Gal';
+                toggleLink.textContent = 'Isdiiwaangeli';
+                document.querySelector('.modal-title').textContent = 'Soo Gal';
+            }
+        }
+
+        function updateUserInterface() {
+            if (isAuthenticated) {
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('connectWallet').style.display = 'block';
+                document.getElementById('connectWallet').textContent = currentUser.username;
+            } else {
+                document.getElementById('loginBtn').style.display = 'block';
+                document.getElementById('connectWallet').style.display = 'none';
+            }
+        }
+
+        function updateStats() {
+            // Simulate real-time stats updates
+            const totalVolume = orders.reduce((sum, order) => sum + (order.amount * order.price), 0);
+            document.getElementById('totalVolume').textContent = `$${(totalVolume / 58).toFixed(1)}M`;
+            document.getElementById('activeOrders').textContent = orders.filter(o => o.status === 'active').length;
+            
+            // Animate numbers
+            animateNumber('totalUsers', 2847, 2850);
+        }
+
+        function animateNumber(elementId, start, end) {
+            const element = document.getElementById(elementId);
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = Math.floor(start + (end - start) * progress);
+                
+                element.textContent = current.toLocaleString();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(e) {
+            const loginModal = document.getElementById('loginModal');
+            const orderModal = document.getElementById('orderModal');
+            
+            if (e.target === loginModal) {
+                hideLoginModal();
+            }
+            if (e.target === orderModal) {
+                hideOrderModal();
+            }
+        });
+
+        // Auto-refresh orders every 30 seconds
+        setInterval(() => {
+            if (Math.random() > 0.7) { // 30% chance to add new order
+                const newOrder = {
+                    id: orders.length + 1,
+                    type: Math.random() > 0.5 ? 'buy' : 'sell',
+                    crypto: ['USDT', 'BTC', 'ETH'][Math.floor(Math.random() * 3)],
+                    amount: Math.random() * 1000 + 10,
+                    price: 58 + (Math.random() * 2 - 1),
+                    paymentMethod: ['Telebirr', 'CBE Birr', 'eBirr'][Math.floor(Math.random() * 3)],
+                    user: 'User' + Math.floor(Math.random() * 1000),
+                    status: 'active',
+                    created: new Date()
+                };
+                orders.unshift(newOrder);
+                loadOrders();
+                updateStats();
+            }
+        }, 30000);
+    </script>
 </body>
 </html>
