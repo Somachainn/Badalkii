@@ -1860,7 +1860,10 @@ async function loadWallet() {
         throw error;
       }
     }
-
+function closeMyOrdersModal() {
+  document.getElementById("myOrdersModal").classList.remove("show");
+  currentOfferId = null; // optional: reset selected order
+      }
 async function openMyOrdersModal() {
   if (!currentKeypair) return showError("Please unlock wallet first.");
   
@@ -1923,7 +1926,9 @@ async function confirmCancelOffer() {
   if (!currentOfferId) return showError("Select an order first.");
 
   if (!confirm("Are you sure you want to cancel this order?")) return;
-
+  function closeEditModal() {
+  document.getElementById("editOrderModal").classList.remove("show");
+  }
   try {
     const account = await server.loadAccount(currentKeypair.publicKey());
     const tx = new StellarSdk.TransactionBuilder(account, {
