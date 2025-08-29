@@ -1,80 +1,430 @@
 <!doctype html>
-
-<html lang="en">
+<html lang="so">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Laam P2P Full Demo with Admin Panel & Fixed Auth</title>
-<style>
-:root{--blue:#1467ff;--bg:#f7fbff;--card:#ffffff}
-html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
-body{background:linear-gradient(180deg,var(--bg),#fff);padding:18px;color:#0b1220}
-.container{max-width:980px;margin:0 auto}
-header{display:flex;align-items:center;gap:12px}
-.logo{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--blue),#4fb3ff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
-h1{font-size:20px;margin:0}.grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}@media(min-width:880px){.grid{grid-template-columns:360px 1fr}}
-.card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
-label{display:block;font-size:13px;margin-top:8px}input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef9;margin-top:6px}button{background:var(--blue);color:#fff;padding:10px 12px;border-radius:10px;border:0;cursor:pointer}.muted{color:#6b7280;font-size:13px}.orders-list{display:flex;flex-direction:column;gap:10px}.order{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;border:1px solid #eef6ff}.small{font-size:13px}.pill{background:#eef7ff;padding:6px 10px;border-radius:999px;font-weight:600}.row{display:flex;gap:8px;align-items:center}.flex{display:flex;gap:8px;align-items:center}.center{display:flex;align-items:center;justify-content:center}.auth-form{margin-top:12px}
-</style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Laam P2P Demo oo la Hagaajiyay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --text-color: #212529;
+            --muted-color: #6c757d;
+            --border-color: #dee2e6;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), #4dabf7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 24px;
+        }
+        h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        @media (min-width: 992px) {
+            .grid {
+                grid-template-columns: 400px 1fr;
+            }
+        }
+        .card {
+            background: var(--card-background);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 12px;
+            margin-bottom: 6px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background: var(--primary-hover);
+        }
+        .muted {
+            color: var(--muted-color);
+            font-size: 13px;
+        }
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .order {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+        .pill {
+            background: #e7f5ff;
+            color: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .auth-form {
+            margin-top: 12px;
+        }
+        #adminPanel {
+            display: none; /* Hidden by default */
+        }
+        .hidden {
+            display: none;
+        }
+        #auth-buttons button {
+            flex-grow: 1;
+        }
+        .btn-secondary {
+            background: #f1f3f5;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        .btn-approve {
+            background-color: var(--success-color);
+        }
+        .btn-reject {
+            background-color: var(--danger-color);
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-<header><div class="logo">LM</div><div><h1>Laam P2P — ETB / USDT (Full Demo)</h1><div class="muted">Frontend ready for GitHub Pages • Supabase connected</div></div></header>
-<div class="grid">
-<div class="card">
-<div id="authSection" class="auth-form">
-<h3>Login / Register</h3>
-<input type="email" id="authEmail" placeholder="Email" />
-<input type="password" id="authPassword" placeholder="Password" />
-<div style="display:flex;gap:8px;margin-top:8px"><button id="btnLogin">Login</button><button id="btnRegister">Register</button></div>
-<div id="authStatus" class="muted small" style="margin-top:6px"></div>
+    <header>
+        <div class="logo">L</div>
+        <div>
+            <h1>Laam P2P Demo</h1>
+            <div class="muted">Isweydaarsiga ETB / USDT</div>
+        </div>
+    </header>
+
+    <div class="grid">
+        <!-- Left Column -->
+        <div>
+            <div class="card" id="authCard">
+                <h3>Soo Gal / Isdiiwaangeli</h3>
+                <div class="auth-form">
+                    <input type="email" id="authEmail" placeholder="Email-kaaga" required />
+                    <input type="password" id="authPassword" placeholder="Eraygaaga sirta ah" required style="margin-top: 8px;" />
+                    <div id="auth-buttons" style="display:flex;gap:8px;margin-top:12px">
+                        <button id="btnLogin">Soo Gal</button>
+                        <button id="btnRegister">Isdiiwaangeli</button>
+                    </div>
+                    <div id="authStatus" class="muted" style="margin-top:8px"></div>
+                </div>
+            </div>
+
+            <div class="card" id="userSection" style="margin-top: 24px; display: none;">
+                 <div style="display:flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong id="welcomeMsg">Ku soo dhawoow!</strong>
+                        <div class="muted small">Jeebkaaga: <span id="walletAddr">Lama xidhin</span></div>
+                    </div>
+                    <button id="btnLogout" class="btn-secondary">Ka Bax</button>
+                </div>
+            </div>
+
+            <div class="card" id="orderCard" style="margin-top: 24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong>Samee Dalab Cusub</strong>
+                    <button id="btnConnect">Xidh Jeebka</button>
+                </div>
+                <form id="orderForm" style="margin-top:12px">
+                    <label for="order_type">Nooca Dalabka</label>
+                    <select id="order_type">
+                        <option value="sell">Iibi USDT (Hel ETB)</option>
+                        <option value="buy">Iibso USDT (Bixi ETB)</option>
+                    </select>
+                    <label for="amount">Lacagta (USDT)</label>
+                    <input id="amount" type="number" step="0.01" value="10" required />
+                    <label for="price">Qiimaha (ETB halkii USDT)</label>
+                    <input id="price" type="number" step="0.01" value="60.00" required />
+                    <label for="payment_method">Habka Lacag Bixinta</label>
+                    <select id="payment_method">
+                        <option>Telebirr</option>
+                        <option>CBE Birr</option>
+                        <option>Xawaalad Bangi</option>
+                    </select>
+                    <div style="margin-top:12px;display:flex;gap:8px">
+                        <button type="submit">Dalbo Hadda</button>
+                        <button id="btnRefresh" type="button" class="btn-secondary">Dib u cusboonaysii</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <strong>Dalabyada Furan</strong>
+                    <div class="muted">Shaandhee: 
+                        <select id="filterType" style="width: auto;">
+                            <option value="all">Dhammaan</option>
+                            <option value="buy">Iibso</option>
+                            <option value="sell">Iibi</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="orders" class="orders-list" style="margin-top:12px;max-height:520px;overflow:auto"></div>
+            </div>
+
+            <div class="card" id="adminPanel" style="margin-top: 24px;">
+                <strong>Qaybta Maamulka (Admin Panel)</strong>
+                <div class="muted">Ansixi ama diid dalabyada la xaqiijinayo</div>
+                <div id="adminOrders" class="orders-list" style="margin-top:12px;max-height:400px;overflow:auto"></div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="row" style="justify-content:space-between;margin-top:12px"><div><strong>Create Order</strong><div class="muted small">Post a buy or sell offer</div></div><div class="flex"><button id="btnConnect">Connect Wallet</button></div></div>
-<form id="orderForm" style="margin-top:12px">
-<label>Order type</label><select id="order_type"><option value="sell">Sell USDT (Get ETB)</option><option value="buy">Buy USDT (Pay ETB)</option></select>
-<label>Amount (USDT)</label><input id="amount" type="number" step="0.0001" value="10" />
-<label>Price (ETB per USDT)</label><input id="price" type="number" step="0.01" value="60.00" />
-<label>Payment Method</label><select id="payment_method"><option>Telebirr</option><option>CBE Birr</option><option>Bank Transfer</option></select>
-<label>Notes</label><textarea id="notes" rows="3" placeholder="e.g. Send to Telebirr 091... and upload receipt"></textarea>
-<label>Upload Receipt</label><input type="file" id="receiptUpload" accept="image/*" />
-<div style="margin-top:12px;display:flex;gap:8px"><button type="submit">Post Order</button><button id="btnRefresh" type="button" style="background:#fff;border:1px solid #e6eef9;color:#0b1220">Refresh</button></div>
-</form>
-<hr style="margin:12px 0" />
-<div class="muted small">Your wallet: <span id="walletAddr">not connected</span></div>
-<div class="muted small">Supabase: <span id="sbStatus">not initialized</span></div>
-</div>
-<div>
-<div class="card" style="margin-bottom:12px">
-<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>Open Orders</strong><div class="muted small">Buyers & sellers (public)</div></div><div class="muted small">Filter: <select id="filterType"><option value="all">All</option><option value="buy">Buy</option><option value="sell">Sell</option></select></div></div>
-<div id="orders" class="orders-list" style="margin-top:12px;max-height:520px;overflow:auto"></div>
-</div>
-<div class="card"><strong>Admin Panel (Manual Fiat Confirmation)</strong><div class="muted small">Approve or reject uploaded receipts</div><div id="adminOrders" class="orders-list" style="margin-top:12px;max-height:400px;overflow:auto"></div></div>
-</div>
-</div>
-<footer style="margin-top:18px;font-size:13px;color:#6b7280">Notes: Supabase tables <code>users, orders, trades, payments, disputes</code> needed. Enable CORS for your GitHub Pages domain.</footer>
-</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/index.min.js"></script>
 <script>
-const SUPABASE_URL='https://uxjcwspliszzccmoaigo.supabase.co';
-const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4amN3c3BsaXN6emNjbW9haWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0NzU5NjYsImV4cCI6MjA3MjA1MTk2Nn0.wVWGwCSDFbBArzbmNCVZwVGvoSeWIcIhlAfA9YO6Pzg';
-const {createClient}=supabase;
-const sb=createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const authEmail=document.getElementById('authEmail'); const authPassword=document.getElementById('authPassword'); const btnLogin=document.getElementById('btnLogin'); const btnRegister=document.getElementById('btnRegister'); const authStatus=document.getElementById('authStatus'); let currentUser=null;
+    // --- KU QOR HALKAN MACLUUMAADKAAGA SUPABASE ---
+    const SUPABASE_URL = 'https://uxjcwspliszzccmoaigo.supabase.co'; // Beddel URL-kaaga
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4amN3c3BsaXN6emNjbW9haWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0NzU5NjYsImV4cCI6MjA3MjA1MTk2Nn0.wVWGwCSDFbBArzbmNCVZwVGvoSeWIcIhlAfA9YO6Pzg'; // Beddel furahaaga
+    
+    // --- Xulashada Qaybaha HTML (DOM Elements) ---
+    const { createClient } = supabase;
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-async function loginUser(){ const email=authEmail.value.trim(); const password=authPassword.value.trim(); if(!email||!password){authStatus.textContent='Email and password required';return;} const { data, error } = await sb.auth.signInWithPassword({email,password}); if(error){authStatus.textContent=error.message;return;} currentUser=data.user; authStatus.textContent=Logged in as ${currentUser.email}; }
+    const authEmail = document.getElementById('authEmail');
+    const authPassword = document.getElementById('authPassword');
+    const btnLogin = document.getElementById('btnLogin');
+    const btnRegister = document.getElementById('btnRegister');
+    const btnLogout = document.getElementById('btnLogout');
+    const authStatus = document.getElementById('authStatus');
+    const authCard = document.getElementById('authCard');
+    const userSection = document.getElementById('userSection');
+    const welcomeMsg = document.getElementById('welcomeMsg');
+    const adminPanel = document.getElementById('adminPanel');
+    const ordersEl = document.getElementById('orders');
+    const adminOrdersEl = document.getElementById('adminOrders');
+    const orderForm = document.getElementById('orderForm');
+    const filterType = document.getElementById('filterType');
+    
+    let currentUser = null;
+    const ADMIN_ROLE = 'admin'; // Magaca doorka maamulka ee Supabase
 
-async function registerUser(){ const email=authEmail.value.trim(); const password=authPassword.value.trim(); if(!email||!password){authStatus.textContent='Email and password required';return;} const { data, error } = await sb.auth.signUp({email,password}); if(error){authStatus.textContent=error.message;return;} currentUser=data.user; authStatus.textContent=Registered and logged in as ${currentUser.email}; }
+    // --- Hawlaha Xaqiijinta Isticmaalaha (Authentication Functions) ---
+    async function loginUser() {
+        const email = authEmail.value.trim();
+        const password = authPassword.value.trim();
+        if (!email || !password) {
+            authStatus.textContent = 'Fadlan geli email iyo eray sir ah.';
+            return;
+        }
+        authStatus.textContent = 'Waa la socodsiiyaa...';
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) {
+            authStatus.textContent = `Cilad ayaa dhacday: ${error.message}`;
+        } else {
+            authStatus.textContent = '';
+            checkUserSession();
+        }
+    }
 
-btnLogin.addEventListener('click',loginUser); btnRegister.addEventListener('click',registerUser);
+    async function registerUser() {
+        const email = authEmail.value.trim();
+        const password = authPassword.value.trim();
+        if (!email || !password) {
+            authStatus.textContent = 'Fadlan geli email iyo eray sir ah.';
+            return;
+        }
+        authStatus.textContent = 'Diiwaangelin ayaa socota...';
+        const { data, error } = await sb.auth.signUp({ email, password });
+        if (error) {
+            authStatus.textContent = `Cilad diiwaangelin: ${error.message}`;
+        } else {
+            authStatus.textContent = 'Si guul leh ayaa lagu diiwaangeliyey! Fadlan soo gal.';
+            authEmail.value = '';
+            authPassword.value = '';
+        }
+    }
 
-const sbStatusEl=document.getElementById('sbStatus'); async function checkSupabase(){try{const { data } = await sb.from('orders').select('id').limit(1);sbStatusEl.textContent='connected';}catch(e){sbStatusEl.textContent='error';console.error(e);}} checkSupabase();
+    async function logoutUser() {
+        await sb.auth.signOut();
+        currentUser = null;
+        updateUI();
+    }
 
-const btnConnect=document.getElementById('btnConnect'); const walletAddrEl=document.getElementById('walletAddr'); let walletAddress=null; btnConnect.addEventListener('click',async()=>{if(window.ethereum){try{const accounts=await window.ethereum.request({method:'eth_requestAccounts'});walletAddress=accounts[0];walletAddrEl.textContent=walletAddress;btnConnect.textContent='Connected';}catch(e){alert('Could not connect wallet');}}else{alert('No Web3 wallet found');}});
+    // --- Hubinta Isticmaalaha iyo Cusboonaysiinta UI ---
+    async function checkUserSession() {
+        const { data: { session } } = await sb.auth.getSession();
+        if (session) {
+            currentUser = session.user;
+            // Si loo hubiyo doorka maamulka, waxaad u baahan tahay inaad akhrido sheegashooyinka JWT
+            const claims = session.user.user_metadata; // Ama meesha aad ku kaydiso doorka
+            if (claims && claims.role === ADMIN_ROLE) {
+                adminPanel.style.display = 'block';
+                loadAdminOrders();
+            } else {
+                adminPanel.style.display = 'none';
+            }
+        } else {
+            currentUser = null;
+        }
+        updateUI();
+        loadOrders();
+    }
 
-const ordersEl=document.getElementById('orders'); const adminOrdersEl=document.getElementById('adminOrders'); const filterType=document.getElementById('filterType'); async function loadOrders(){ordersEl.innerHTML='<div class="muted small center">Loading...</div>';let q=sb.from('orders').select('*').eq('status','open').order('created_at',{ascending:false});if(filterType.value!=='all')q=q.eq('order_type',filterType.value);const {data,error}=await q;if(error){ordersEl.innerHTML='<div class="muted">Could not load orders</div>';return;}if(!data||data.length===0){ordersEl.innerHTML='<div class="muted">No orders yet</div>';return;}ordersEl.innerHTML='';adminOrdersEl.innerHTML='';data.forEach(o=>{const div=document.createElement('div');div.className='order';const left=document.createElement('div');left.innerHTML=<div style="font-weight:700">${o.order_type.toUpperCase()} • ${o.asset||'USDT'}</div><div class="small muted">Posted: ${new Date(o.created_at).toLocaleString()}</div><div class="muted small">${o.notes||''}</div>;const right=document.createElement('div');right.innerHTML=<div class="pill">${Number(o.amount).toLocaleString()} ${o.asset||'USDT'}</div><div class="muted small">Price: ${Number(o.price).toLocaleString()} ${o.fiat_currency||'ETB'}</div><div style="margin-top:8px" class="row"><button data-id="${o.id}" class="btnMatch">Match</button></div>;div.appendChild(left);div.appendChild(right);ordersEl.appendChild(div); if(o.receipt_url){const adminDiv=document.createElement('div');adminDiv.className='order';adminDiv.innerHTML=<div><a href='${o.receipt_url}' target='_blank'>View receipt</a></div><div style='display:flex;gap:6px'><button data-id='${o.id}' class='btnApprove'>Approve</button><button data-id='${o.id}' class='btnReject'>Reject</button></div>;adminOrdersEl.appendChild(adminDiv);}}); document.querySelectorAll('.btnMatch').forEach(b=>b.addEventListener('click',onMatch)); document.querySelectorAll('.btnApprove').forEach(b=>b.addEventListener('click',async e=>{const id=e.target.dataset.id;await sb.from('orders').update({status:'confirmed'}).eq('id',id);loadOrders();})); document.querySelectorAll('.btnReject').forEach(b=>b.addEventListener('click',async e=>{const id=e.target.dataset.id;await sb.from('orders').update({status:'rejected'}).eq('id',id);loadOrders();})); } filterType.addEventListener('change',loadOrders); document.getElementById('btnRefresh').addEventListener('click',loadOrders); loadOrders();
+    function updateUI() {
+        if (currentUser) {
+            authCard.style.display = 'none';
+            userSection.style.display = 'block';
+            welcomeMsg.textContent = `Ku soo dhawoow, ${currentUser.email.split('@')[0]}`;
+        } else {
+            authCard.style.display = 'block';
+            userSection.style.display = 'none';
+            adminPanel.style.display = 'none';
+        }
+    }
 
-const orderForm=document.getElementById('orderForm'); orderForm.addEventListener('submit',async e=>{e.preventDefault();if(!currentUser){alert('Login/Register first');return;}const amount=document.getElementById('amount').value;const price=document.getElementById('price').value;const order_type=document.getElementById('order_type').value;const payment_method=document.getElementById('payment_method').value;const notes=document.getElementById('notes').value;const receipt=document.getElementById('receiptUpload').files[0];let receipt_url=null;if(receipt){const { data, error } = await sb.storage.from('receipts').upload(receipts/${Date.now()}_${receipt.name}, receipt);if(error){alert('Upload failed');console.error(error);return;}const { publicUrl } = sb.storage.from('receipts').getPublicUrl(data.path);receipt_url = publicUrl;}const { error } = await sb.from('orders').insert([{user_id:currentUser.id,order_type,amount,price,payment_method,notes,receipt_url,status:'open',asset:'USDT',fiat_currency:'ETB'}]);if(error){alert('Failed to post order');console.error(error);return;}alert('Order posted');orderForm.reset();loadOrders();});
+    // --- Hawlaha Dalabyada (Order Functions) ---
+    async function loadOrders() {
+        ordersEl.innerHTML = '<div class="muted">Waa la soo shubayaa dalabyada...</div>';
+        let query = sb.from('orders').select('*').eq('status', 'open').order('created_at', { ascending: false });
+        
+        if (filterType.value !== 'all') {
+            query = query.eq('order_type', filterType.value);
+        }
 
-async function onMatch(e){const id=e.target.dataset.id;alert('Simulated trade with order '+id);} </script>
+        const { data, error } = await query;
 
+        if (error) {
+            ordersEl.innerHTML = `<div class="muted" style="color: var(--danger-color);">Cilad: ${error.message}</div>`;
+            return;
+        }
+        if (!data || data.length === 0) {
+            ordersEl.innerHTML = '<div class="muted">Wali ma jiraan dalabyo furan.</div>';
+            return;
+        }
+
+        ordersEl.innerHTML = '';
+        data.forEach(o => {
+            const div = document.createElement('div');
+            div.className = 'order';
+            const typeClass = o.order_type === 'buy' ? 'success' : 'danger';
+            div.innerHTML = `
+                <div>
+                    <div style="font-weight: 700; color: var(--${typeClass}-color);">${o.order_type.toUpperCase()} USDT</div>
+                    <div class="muted small">Habka: ${o.payment_method}</div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="pill">${Number(o.amount).toLocaleString()} USDT</div>
+                    <div class="muted small">Qiimaha: ${Number(o.price).toLocaleString()} ETB</div>
+                </div>
+            `;
+            ordersEl.appendChild(div);
+        });
+    }
+    
+    async function loadAdminOrders() {
+        // Kani waa tusaale, waxaad u baahan tahay inaad ku darto habka xaqiijinta rasiidhada
+        adminOrdersEl.innerHTML = '<div class="muted">Wali ma jiraan dalabyo u baahan ansixin.</div>';
+    }
+
+    async function postOrder(e) {
+        e.preventDefault();
+        if (!currentUser) {
+            alert('Fadlan soo gal si aad u dalbato.');
+            return;
+        }
+        const formData = new FormData(orderForm);
+        const orderData = {
+            user_id: currentUser.id,
+            order_type: document.getElementById('order_type').value,
+            amount: document.getElementById('amount').value,
+            price: document.getElementById('price').value,
+            payment_method: document.getElementById('payment_method').value,
+            status: 'open',
+            asset: 'USDT',
+            fiat_currency: 'ETB'
+        };
+
+        const { error } = await sb.from('orders').insert([orderData]);
+        if (error) {
+            alert(`Cilad ayaa dhacday: ${error.message}`);
+        } else {
+            alert('Dalabkaaga si guul leh ayaa loo gudbiyey!');
+            orderForm.reset();
+            loadOrders();
+        }
+    }
+
+    // --- Dhageystayaasha Dhacdooyinka (Event Listeners) ---
+    document.addEventListener('DOMContentLoaded', checkUserSession);
+    btnLogin.addEventListener('click', loginUser);
+    btnRegister.addEventListener('click', registerUser);
+    btnLogout.addEventListener('click', logoutUser);
+    orderForm.addEventListener('submit', postOrder);
+    filterType.addEventListener('change', loadOrders);
+    document.getElementById('btnRefresh').addEventListener('click', loadOrders);
+
+</script>
 </body>
 </html>
