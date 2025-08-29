@@ -7,7 +7,6 @@
   <title>Laam P2P (GitHub Pages)</title>
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   <style>
-    /* Minimal, mobile-first styles */
     :root{--blue:#1467ff;--bg:#f7fbff;--card:#ffffff}
     html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
     body{background:linear-gradient(180deg,var(--bg),#fff);padding:18px;color:#0b1220}
@@ -34,6 +33,7 @@
     .center{display:flex;align-items:center;justify-content:center}
     .tximg{max-width:120px;border-radius:8px;border:1px solid #e6eef9}
     a.link{color:var(--blue);text-decoration:none}
+    .auth-form{margin-top:12px}
   </style>
 </head>
 <body>
@@ -45,9 +45,20 @@
         <div class="muted">Frontend static app ready for GitHub Pages • Connects to Supabase</div>
       </div>
     </header><div class="grid">
-  <!-- LEFT: Create Order + Wallet -->
+  <!-- LEFT: Auth + Create Order + Wallet -->
   <div class="card">
-    <div class="row" style="justify-content:space-between">
+    <div id="authSection" class="auth-form">
+      <h3>Login / Register</h3>
+      <input type="email" id="authEmail" placeholder="Email" />
+      <input type="password" id="authPassword" placeholder="Password" />
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button id="btnLogin">Login</button>
+        <button id="btnRegister">Register</button>
+      </div>
+      <div id="authStatus" class="muted small" style="margin-top:6px"></div>
+    </div>
+
+    <div class="row" style="justify-content:space-between;margin-top:12px">
       <div>
         <strong>Create order</strong>
         <div class="muted small">Post a buy or sell offer (public orderbook)</div>
@@ -92,9 +103,7 @@
         <div class="muted small">Filter: <select id="filterType"><option value="all">All</option><option value="buy">Buy</option><option value="sell">Sell</option></select></div>
       </div>
 
-      <div id="orders" class="orders-list" style="margin-top:12px;max-height:520px;overflow:auto">
-        <!-- orders inserted here -->
-      </div>
+      <div id="orders" class="orders-list" style="margin-top:12px;max-height:520px;overflow:auto"></div>
     </div>
 
     <div class="card">
@@ -105,36 +114,26 @@
   </div>
 </div>
 
-<footer style="margin-top:18px;font-size:13px;color:#6b7280">Notes: This is a **frontend-only demo** that expects a Supabase project with the tables <code>users, orders, trades, payments, disputes</code> created (SQL schema). Replace <strong>SUPABASE_URL</strong> and <strong>SUPABASE_ANON_KEY</strong> with your project's values inside the script. Enable CORS for the domain where you deploy (or allow all origins for testing).</footer>
+<footer style="margin-top:18px;font-size:13px;color:#6b7280">Notes: This is a **frontend-only demo** that expects a Supabase project with the tables <code>users, orders, trades, payments, disputes</code> created (SQL schema). Replace <strong>SUPABASE_URL</strong> and <strong>SUPABASE_ANON_KEY</strong> with your project's values inside the script. Enable CORS for the domain where you deploy.</footer>
 
-  </div>  <!-- Supabase JS (CDN) -->  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/index.min.js"></script>  <script>
-    // -------------------------------
-    // CONFIG — REPLACE with your Supabase values
-    // -------------------------------
+  </div>  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/index.min.js"></script>  <script>
     const SUPABASE_URL = 'https://REPLACE_WITH_YOUR_SUPABASE_PROJECT.supabase.co';
     const SUPABASE_ANON_KEY = 'REPLACE_WITH_ANON_KEY';
 
-    // -------------------------------
-    // Initialize Supabase
-    // -------------------------------
     const { createClient } = supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     const sbStatusEl = document.getElementById('sbStatus');
     async function checkSupabase(){
       try{
         const { data } = await sb.from('orders').select('id').limit(1);
         sbStatusEl.textContent = 'connected';
-      }catch(e){
-        sbStatusEl.textContent = 'error — check keys & CORS';
-        console.error(e);
-      }
+      }catch(e){ sbStatusEl.textContent = 'error'; console.error(e); }
     }
     checkSupabase();
 
-    // -------------------------------
-    // Wallet Connect (Metamask basic)
-    // -------------------------------
+    // -------------------------
+    // Wallet Connect
+    // -------------------------
     const btnConnect = document.getElementById('btnConnect');
     const walletAddrEl = document.getElementById('walletAddr');
     let walletAddress = null;
@@ -145,110 +144,5 @@
           walletAddress = accounts[0];
           walletAddrEl.textContent = walletAddress;
           btnConnect.textContent = 'Connected';
-        }catch(e){
-          console.error(e);
-          alert('Could not connect wallet');
-        }
-      }else{
-        alert('No Web3 wallet found in browser. Use Metamask mobile or a compatible browser.');
-      }
-    });
-
-    // -------------------------------
-    // Load open orders
-    // -------------------------------
-    const ordersEl = document.getElementById('orders');
-    const filterType = document.getElementById('filterType');
-
-    async function loadOrders(){
-      ordersEl.innerHTML = '<div class="muted small center">Loading...</div>';
-      const ft = filterType.value;
-      let q = sb.from('orders').select('*').eq('status','open').order('created_at',{ascending:false});
-      if(ft !== 'all') q = q.eq('order_type', ft);
-      const { data, error } = await q;
-      if(error){ ordersEl.innerHTML = '<div class="muted">Could not load orders</div>'; console.error(error); return; }
-      if(!data || data.length === 0){ ordersEl.innerHTML = '<div class="muted">No orders yet</div>'; return; }
-
-      ordersEl.innerHTML = '';
-      data.forEach(o=>{
-        const div = document.createElement('div'); div.className='order';
-        const left = document.createElement('div'); left.innerHTML = `<div style="font-weight:700">${o.order_type.toUpperCase()} • ${o.asset}</div><div class="small muted">Posted: ${new Date(o.created_at).toLocaleString()}</div><div class="muted small">${o.notes || ''}</div>`;
-        const right = document.createElement('div');
-        right.innerHTML = `<div class="pill">${Number(o.amount).toLocaleString()} ${o.asset}</div><div class="muted small">Price: ${Number(o.price).toLocaleString()} ${o.fiat_currency}</div><div style="margin-top:8px" class="row"><button data-id="${o.id}" class="btnMatch">Match</button><button data-id="${o.id}" class="btnView muted" style="background:#fff;border:1px solid #eef6ff;color:#0b1220">View</button></div>`;
-        div.appendChild(left); div.appendChild(right);
-        ordersEl.appendChild(div);
-      });
-
-      // attach match handlers
-      document.querySelectorAll('.btnMatch').forEach(b=> b.addEventListener('click', onMatch));
-    }
-
-    filterType.addEventListener('change', loadOrders);
-    document.getElementById('btnRefresh').addEventListener('click', loadOrders);
-    loadOrders();
-
-    // -------------------------------
-    // Post order
-    // -------------------------------
-    const orderForm = document.getElementById('orderForm');
-    orderForm.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const order_type = document.getElementById('order_type').value;
-      const amount = Number(document.getElementById('amount').value);
-      const price = Number(document.getElementById('price').value);
-      const payment_method = document.getElementById('payment_method').value;
-      const notes = document.getElementById('notes').value;
-
-      if(!walletAddress){ if(!confirm('No wallet connected. Post using guest account?')) return; }
-
-      const payload = {
-        user_id: walletAddress ? walletAddress : null,
-        order_type, asset: 'USDT', fiat_currency: 'ETB', amount, price, payment_method, notes, status: 'open'
-      };
-
-      const { data, error } = await sb.from('orders').insert([payload]).select().single();
-      if(error){ alert('Could not post order — check console'); console.error(error); return; }
-      alert('Order posted'); orderForm.reset(); loadOrders();
-    });
-
-    // -------------------------------
-    // Match flow (create trade)
-    // -------------------------------
-    async function onMatch(e){
-      const orderId = e.currentTarget.dataset.id;
-      // load order
-      const { data: orders } = await sb.from('orders').select('*').eq('id', orderId).single();
-      if(!orders){ alert('Order not found'); return; }
-      // quick demo: create trade where current wallet is taker
-      const buyer = orders.order_type === 'sell' ? (walletAddress || null) : orders.user_id;
-      const seller = orders.order_type === 'sell' ? orders.user_id : (walletAddress || null);
-
-      const tradePayload = {
-        order_id: orderId,
-        buyer_id: buyer,
-        seller_id: seller,
-        amount: orders.amount,
-        fiat_amount: Number(orders.amount) * Number(orders.price),
-        status: 'pending'
-      };
-
-      const { data: tdata, error } = await sb.from('trades').insert([tradePayload]).select().single();
-      if(error){ alert('Could not create trade — check console'); console.error(error); return; }
-
-      // mark order matched
-      await sb.from('orders').update({ status: 'matched' }).eq('id', orderId);
-      document.getElementById('tradeBox').innerHTML = `<div class="muted small">Trade created: <strong>${tdata.id}</strong>. Ask buyer to upload payment receipt in "My Trades" (not implemented in this demo).</div>`;
-      loadOrders();
-    }
-
-    // -------------------------------
-    // Realtime: listen to new orders
-    // -------------------------------
-    try{
-      sb.channel('public:orders')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => { loadOrders(); })
-        .subscribe();
-    }catch(e){ console.warn('Realtime init might fail in local testing', e); }
-
-  </script></body>
-</html>
+        }catch(e){ alert('Could not connect wallet'); }
+      }else{ alert('No Web3 wallet found'); }
