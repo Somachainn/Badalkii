@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="so">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -513,18 +513,18 @@
                     <span>CryptoSomali</span>
                 </div>
                 <ul class="nav-links">
-                    <li><a href="#trading">Ganacsiga</a></li>
-                    <li><a href="#orders">Dalabyada</a></li>
-                    <li><a href="#wallet">Jeebka</a></li>
-                    <li><a href="#history">Taariikh</a></li>
+                    <li><a href="#trading">Trading</a></li>
+                    <li><a href="#orders">Orders</a></li>
+                    <li><a href="#wallet">Wallet</a></li>
+                    <li><a href="#history">History</a></li>
                 </ul>
                 <div class="user-section">
                     <div class="wallet-balance" id="walletBalance">
-                        <span>Jeebka: </span>
+                        <span>Wallet: </span>
                         <span id="balanceAmount">0.00 USDT</span>
                     </div>
-                    <button class="btn btn-primary" id="connectWallet">Xidh Jeebka</button>
-                    <button class="btn btn-primary" id="loginBtn" style="display: none;">Soo Gal</button>
+                    <button class="btn btn-primary" id="connectWallet">Connect Wallet</button>
+                    <button class="btn btn-primary" id="loginBtn" style="display: none;">Login</button>
                 </div>
             </nav>
         </div>
@@ -537,8 +537,8 @@
             <section class="hero">
                 <div class="hero-content">
                     <h1>P2P Crypto Exchange</h1>
-                    <p>Isweydaarsi ammaan ah oo degdeg ah oo loogu talagalay cryptocurrency-ga. Iibi ama iibso Bitcoin, USDT, iyo kuwo kale si toos ah.</p>
-                    <button class="btn btn-primary btn-lg" id="startTradingBtn">Bilow Ganacsiga</button>
+                    <p>Secure and fast exchange for cryptocurrency. Buy or sell Bitcoin, USDT, and others directly.</p>
+                    <button class="btn btn-primary btn-lg" id="startTradingBtn">Start Trading</button>
                 </div>
             </section>
 
@@ -546,19 +546,19 @@
             <section class="stats fade-in">
                 <div class="stat-card">
                     <div class="stat-value" id="totalVolume">$2.5M</div>
-                    <div class="stat-label">Wadarta Ganacsiga 24h</div>
+                    <div class="stat-label">24h Trading Volume</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="activeOrders">156</div>
-                    <div class="stat-label">Dalabyo Firfircoon</div>
+                    <div class="stat-label">Active Orders</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="totalUsers">2,847</div>
-                    <div class="stat-label">Isticmaalayaal Diiwaangashan</div>
+                    <div class="stat-label">Registered Users</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="avgTime">3.2min</div>
-                    <div class="stat-label">Celceliska Waqtiga Ganacsiga</div>
+                    <div class="stat-label">Average Trade Time</div>
                 </div>
             </section>
 
@@ -566,11 +566,11 @@
             <section class="trading-interface fade-in" id="trading">
                 <!-- Order Book -->
                 <div class="order-book">
-                    <h2 class="section-title">Dalabyada Suuqa</h2>
+                    <h2 class="section-title">Market Orders</h2>
                     <div class="order-tabs">
-                        <button class="tab active" data-filter="all">Dhammaan</button>
-                        <button class="tab" data-filter="buy">Iibso</button>
-                        <button class="tab" data-filter="sell">Iibi</button>
+                        <button class="tab active" data-filter="all">All</button>
+                        <button class="tab" data-filter="buy">Buy</button>
+                        <button class="tab" data-filter="sell">Sell</button>
                     </div>
                     <div class="order-list" id="orderList">
                         <!-- Orders will be populated by JavaScript -->
@@ -579,10 +579,10 @@
 
                 <!-- Order Form -->
                 <div class="order-form">
-                    <h2 class="section-title">Samee Dalab</h2>
+                    <h2 class="section-title">Create Order</h2>
                     <div class="order-tabs">
-                        <button class="tab active" id="buyTab">Iibso</button>
-                        <button class="tab" id="sellTab">Iibi</button>
+                        <button class="tab active" id="buyTab">Buy</button>
+                        <button class="tab" id="sellTab">Sell</button>
                     </div>
                     
                     <form id="orderForm">
@@ -597,17 +597,17 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Lacagta (Amount)</label>
+                            <label class="form-label">Amount</label>
                             <input type="number" class="form-input" id="amountInput" placeholder="0.00" step="0.01" min="0.01" required>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Qiimaha (ETB)</label>
+                            <label class="form-label">Price (ETB)</label>
                             <input type="number" class="form-input" id="priceInput" placeholder="0.00" step="0.01" min="0.01" required>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Habka Lacag Bixinta</label>
+                            <label class="form-label">Payment Method</label>
                             <select class="form-select" id="paymentMethod">
                                 <option value="telebirr">Telebirr</option>
                                 <option value="cbe">CBE Birr</option>
@@ -619,19 +619,19 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Macluumaadka Lacag Bixinta</label>
-                            <input type="text" class="form-input" id="paymentInfo" placeholder="Lambarka telefoonka ama akoonka" required>
+                            <label class="form-label">Payment Information</label>
+                            <input type="text" class="form-input" id="paymentInfo" placeholder="Phone number or account" required>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-full" id="submitOrder">
-                            <span id="orderButtonText">Samee Dalabka</span>
+                            <span id="orderButtonText">Create Order</span>
                             <div class="loading" id="orderLoading" style="display: none;"></div>
                         </button>
                     </form>
 
                     <div class="form-group" style="margin-top: 2rem;">
                         <div style="background: var(--surface-light); padding: 1rem; border-radius: 8px;">
-                            <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Wadarta Guud:</div>
+                            <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Total:</div>
                             <div style="font-size: 1.2rem; font-weight: 600;" id="totalAmount">0.00 ETB</div>
                         </div>
                     </div>
@@ -644,24 +644,24 @@
     <div class="modal" id="loginModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">So Gal / Isdiiwaangeli</h3>
+                <h3 class="modal-title">Login / Register</h3>
                 <button class="close-btn" id="closeLoginModal">&times;</button>
             </div>
-            <form id="authForm">
+                <form id="authForm">
                 <div class="form-group">
                     <label class="form-label">Email</label>
                     <input type="email" class="form-input" id="emailInput" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Erayga Sirta ah</label>
+                    <label class="form-label">Password</label>
                     <input type="password" class="form-input" id="passwordInput" required>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-full" id="authSubmit">Soo Gal</button>
+                    <button type="submit" class="btn btn-primary btn-full" id="authSubmit">Login</button>
                 </div>
                 <div style="text-align: center; margin-top: 1rem;">
-                    <span style="color: var(--text-muted);">Ma lihid akoon? </span>
-                    <a href="#" id="toggleAuth" style="color: var(--primary-color);">Isdiiwaangeli</a>
+                    <span style="color: var(--text-muted);">Don't have an account? </span>
+                    <a href="#" id="toggleAuth" style="color: var(--primary-color);">Register</a>
                 </div>
             </form>
         </div>
@@ -671,7 +671,7 @@
     <div class="modal" id="orderModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Faahfaahinta Dalabka</h3>
+                <h3 class="modal-title">Order Details</h3>
                 <button class="close-btn" id="closeOrderModal">&times;</button>
             </div>
             <div id="orderDetails">
@@ -811,10 +811,10 @@
             
             if (type === 'buy') {
                 submitBtn.className = 'btn btn-success btn-full';
-                buttonText.textContent = 'Samee Dalabka Iibsashada';
+                buttonText.textContent = 'Create Buy Order';
             } else {
                 submitBtn.className = 'btn btn-danger btn-full';
-                buttonText.textContent = 'Samee Dalabka Iibinta';
+                buttonText.textContent = 'Create Sell Order';
             }
         }
 
@@ -837,7 +837,7 @@
             if (filteredOrders.length === 0) {
                 orderList.innerHTML = `
                     <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
-                        <p>Wali ma jiraan dalabyo ${currentFilter === 'all' ? '' : currentFilter === 'buy' ? 'iibsashada' : 'iibinta'}.</p>
+                        <p>No ${currentFilter === 'all' ? '' : currentFilter === 'buy' ? 'buy' : 'sell'} orders yet.</p>
                     </div>
                 `;
                 return;
@@ -846,14 +846,14 @@
             orderList.innerHTML = filteredOrders.map(order => `
                 <div class="order-item" onclick="showOrderDetails(${order.id})">
                     <div class="order-info">
-                        <div class="order-type ${order.type}">${order.type === 'buy' ? 'IIBSO' : 'IIBI'} ${order.crypto}</div>
+                        <div class="order-type ${order.type}">${order.type === 'buy' ? 'BUY' : 'SELL'} ${order.crypto}</div>
                         <div class="order-details">${order.paymentMethod} • ${order.user}</div>
                     </div>
                     <div class="order-amount">
                         <div>${order.amount} ${order.crypto}</div>
                         <div class="order-price">${order.price.toLocaleString()} ETB</div>
                     </div>
-                    <div class="status ${order.status}">${order.status === 'active' ? 'Firfircoon' : order.status}</div>
+                    <div class="status ${order.status}">${order.status === 'active' ? 'Active' : order.status}</div>
                 </div>
             `).join('');
         }
@@ -882,7 +882,7 @@
             
             // Show loading
             document.getElementById('orderLoading').style.display = 'block';
-            document.getElementById('orderButtonText').textContent = 'Waa la sameynayaa...';
+            document.getElementById('orderButtonText').textContent = 'Creating...';
             
             // Simulate API call
             setTimeout(() => {
@@ -899,7 +899,7 @@
                 setOrderType(orderType); // Reset button text
                 
                 // Show success message
-                alert('Dalabkaaga si guul leh ayaa loo sameeyay!');
+                alert('Your order has been created successfully!');
             }, 2000);
         }
 
@@ -922,42 +922,42 @@
                 <div style="margin-bottom: 1.5rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                         <span style="font-weight: 600; font-size: 1.2rem;" class="order-type ${order.type}">
-                            ${order.type === 'buy' ? 'IIBSO' : 'IIBI'} ${order.crypto}
+                            ${order.type === 'buy' ? 'BUY' : 'SELL'} ${order.crypto}
                         </span>
-                        <span class="status ${order.status}">${order.status === 'active' ? 'Firfircoon' : order.status}</span>
+                        <span class="status ${order.status}">${order.status === 'active' ? 'Active' : order.status}</span>
                     </div>
                     
                     <div style="background: var(--surface-light); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                             <div>
-                                <div style="color: var(--text-muted); font-size: 0.9rem;">Lacagta</div>
+                                <div style="color: var(--text-muted); font-size: 0.9rem;">Amount</div>
                                 <div style="font-weight: 600;">${order.amount} ${order.crypto}</div>
                             </div>
                             <div>
-                                <div style="color: var(--text-muted); font-size: 0.9rem;">Qiimaha</div>
+                                <div style="color: var(--text-muted); font-size: 0.9rem;">Price</div>
                                 <div style="font-weight: 600;">${order.price.toLocaleString()} ETB</div>
                             </div>
                         </div>
                     </div>
                     
                     <div style="margin-bottom: 1rem;">
-                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Habka Lacag Bixinta</div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Payment Method</div>
                         <div style="font-weight: 600;">${order.paymentMethod}</div>
                     </div>
                     
                     <div style="margin-bottom: 1rem;">
-                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Isticmaale</div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">User</div>
                         <div style="font-weight: 600;">${order.user}</div>
                     </div>
                     
                     <div style="margin-bottom: 2rem;">
-                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Waqtiga la sameeyay</div>
-                        <div style="font-weight: 600;">${order.created.toLocaleString('so-SO')}</div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Time Created</div>
+                        <div style="font-weight: 600;">${order.created.toLocaleString('en-US')}</div>
                     </div>
                     
                     ${isAuthenticated && currentUser.username !== order.user ? `
                         <button class="btn btn-primary btn-full" onclick="initiateTradeChat(${order.id})">
-                            Bilow Ganacsiga
+                            Start Trade
                         </button>
                     ` : ''}
                 </div>
@@ -967,7 +967,7 @@
         }
 
         function initiateTradeChat(orderId) {
-            alert('Ganacsigu waa bilaabmay! Waxaad la xiriiri kartaa iibiyaha si aad u dhammaysato ganacsiga.');
+            alert('Trade initiated! You can contact the seller to complete the trade.');
             hideOrderModal();
         }
 
@@ -978,7 +978,7 @@
             }
             
             // Simulate wallet connection
-            alert('Jeebka waa la xidhay si guul leh!');
+            alert('Wallet connected successfully!');
             document.getElementById('balanceAmount').textContent = '1,250.00 USDT';
         }
 
@@ -999,7 +999,7 @@
             
             const email = document.getElementById('emailInput').value;
             const password = document.getElementById('passwordInput').value;
-            const isLogin = document.getElementById('authSubmit').textContent === 'Soo Gal';
+            const isLogin = document.getElementById('authSubmit').textContent === 'Login';
             
             // Simulate authentication
             setTimeout(() => {
@@ -1016,7 +1016,7 @@
                 updateUserInterface();
                 hideLoginModal();
                 
-                alert(isLogin ? 'Si guul leh ayaad u soo gashay!' : 'Akoonkaaga waa la sameeyay!');
+                alert(isLogin ? 'Successfully logged in!' : 'Your account has been created!');
             }, 1000);
         }
 
@@ -1024,14 +1024,14 @@
             const submitBtn = document.getElementById('authSubmit');
             const toggleLink = document.getElementById('toggleAuth');
             
-            if (submitBtn.textContent === 'Soo Gal') {
-                submitBtn.textContent = 'Isdiiwaangeli';
-                toggleLink.textContent = 'Soo Gal';
-                document.querySelector('.modal-title').textContent = 'Isdiiwaangeli';
+            if (submitBtn.textContent === 'Login') {
+                submitBtn.textContent = 'Register';
+                toggleLink.textContent = 'Login';
+                document.querySelector('.modal-title').textContent = 'Register';
             } else {
-                submitBtn.textContent = 'Soo Gal';
-                toggleLink.textContent = 'Isdiiwaangeli';
-                document.querySelector('.modal-title').textContent = 'Soo Gal';
+                submitBtn.textContent = 'Login';
+                toggleLink.textContent = 'Register';
+                document.querySelector('.modal-title').textContent = 'Login';
             }
         }
 
