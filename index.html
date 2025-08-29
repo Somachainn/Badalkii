@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Laam P2P (GitHub Pages)</title>
+  <title>Laam P2P Full Demo</title>
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   <style>
     :root{--blue:#1467ff;--bg:#f7fbff;--card:#ffffff}
@@ -25,14 +25,9 @@
     .order{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;border:1px solid #eef6ff}
     .small{font-size:13px}
     .pill{background:#eef7ff;padding:6px 10px;border-radius:999px;font-weight:600}
-    .success{background:#e6ffef;color:#067a3d;padding:6px 10px;border-radius:8px}
-    .warn{background:#fff6e6;color:#b45309;padding:6px 10px;border-radius:8px}
-    .note{font-size:13px;color:#374151}
     .row{display:flex;gap:8px;align-items:center}
     .flex{display:flex;gap:8px;align-items:center}
     .center{display:flex;align-items:center;justify-content:center}
-    .tximg{max-width:120px;border-radius:8px;border:1px solid #e6eef9}
-    a.link{color:var(--blue);text-decoration:none}
     .auth-form{margin-top:12px}
   </style>
 </head>
@@ -41,11 +36,11 @@
     <header>
       <div class="logo">LM</div>
       <div>
-        <h1>Laam P2P — ETB / USDT (Demo)</h1>
-        <div class="muted">Frontend static app ready for GitHub Pages • Connects to Supabase</div>
+        <h1>Laam P2P — ETB / USDT (Full Demo)</h1>
+        <div class="muted">Frontend ready for GitHub Pages • Supabase connected</div>
       </div>
     </header><div class="grid">
-  <!-- LEFT: Auth + Create Order + Wallet -->
+  <!-- LEFT: Auth + Wallet + Create Order -->
   <div class="card">
     <div id="authSection" class="auth-form">
       <h3>Login / Register</h3>
@@ -59,13 +54,8 @@
     </div>
 
     <div class="row" style="justify-content:space-between;margin-top:12px">
-      <div>
-        <strong>Create order</strong>
-        <div class="muted small">Post a buy or sell offer (public orderbook)</div>
-      </div>
-      <div class="flex">
-        <button id="btnConnect">Connect Wallet</button>
-      </div>
+      <div><strong>Create Order</strong><div class="muted small">Post a buy or sell offer</div></div>
+      <div class="flex"><button id="btnConnect">Connect Wallet</button></div>
     </div>
 
     <form id="orderForm" style="margin-top:12px">
@@ -81,7 +71,7 @@
       <label>Payment Method</label>
       <select id="payment_method"><option>Telebirr</option><option>CBE Birr</option><option>Bank Transfer</option></select>
 
-      <label>Notes (instructions to buyer/seller)</label>
+      <label>Notes</label>
       <textarea id="notes" rows="3" placeholder="e.g. Send to Telebirr 091... and upload receipt"></textarea>
 
       <div style="margin-top:12px;display:flex;gap:8px">
@@ -102,47 +92,92 @@
         <div><strong>Open Orders</strong><div class="muted small">Buyers & sellers (public)</div></div>
         <div class="muted small">Filter: <select id="filterType"><option value="all">All</option><option value="buy">Buy</option><option value="sell">Sell</option></select></div>
       </div>
-
       <div id="orders" class="orders-list" style="margin-top:12px;max-height:520px;overflow:auto"></div>
     </div>
 
     <div class="card">
       <strong>Match & Trade (Demo)</strong>
-      <div class="muted small">Click "Match" to create a trade between you and the order poster. This demo uses Supabase tables directly.</div>
+      <div class="muted small">Click "Match" to create a trade with another user.</div>
       <div style="margin-top:10px" id="tradeBox"></div>
     </div>
   </div>
 </div>
 
-<footer style="margin-top:18px;font-size:13px;color:#6b7280">Notes: This is a **frontend-only demo** that expects a Supabase project with the tables <code>users, orders, trades, payments, disputes</code> created (SQL schema). Replace <strong>SUPABASE_URL</strong> and <strong>SUPABASE_ANON_KEY</strong> with your project's values inside the script. Enable CORS for the domain where you deploy.</footer>
+<footer style="margin-top:18px;font-size:13px;color:#6b7280">Notes: Supabase tables <code>users, orders, trades, payments, disputes</code> needed. Replace <strong>SUPABASE_URL</strong> & <strong>SUPABASE_ANON_KEY</strong> with your project values. Enable CORS.</footer>
 
   </div>  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/index.min.js"></script>  <script>
-    const SUPABASE_URL = 'https://REPLACE_WITH_YOUR_SUPABASE_PROJECT.supabase.co';
-    const SUPABASE_ANON_KEY = 'REPLACE_WITH_ANON_KEY';
+    const SUPABASE_URL = 'https://uxjcwspliszzcmoaigo.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4amN3c3BsaXN6emNjbW9haWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0NzU5NjYsImV4cCI6MjA3MjA1MTk2Nn0.wVWGwCSDFbBArzbmNCVZwVGvoSeWIcIhlAfA9YO6Pzg';
 
     const { createClient } = supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const authEmail = document.getElementById('authEmail');
+    const authPassword = document.getElementById('authPassword');
+    const btnLogin = document.getElementById('btnLogin');
+    const btnRegister = document.getElementById('btnRegister');
+    const authStatus = document.getElementById('authStatus');
+
+    let currentUser = null;
+
+    btnLogin.addEventListener('click', async () => {
+      const email = authEmail.value; const password = authPassword.value;
+      if(!email||!password){ authStatus.textContent='Email and password required'; return; }
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if(error){ authStatus.textContent = error.message; return; }
+      currentUser = data.user; authStatus.textContent = `Logged in as ${currentUser.email}`;
+    });
+
+    btnRegister.addEventListener('click', async () => {
+      const email = authEmail.value; const password = authPassword.value;
+      if(!email||!password){ authStatus.textContent='Email and password required'; return; }
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if(error){ authStatus.textContent = error.message; return; }
+      currentUser = data.user; authStatus.textContent = `Registered and logged in as ${currentUser.email}`;
+    });
+
     const sbStatusEl = document.getElementById('sbStatus');
     async function checkSupabase(){
-      try{
-        const { data } = await sb.from('orders').select('id').limit(1);
-        sbStatusEl.textContent = 'connected';
-      }catch(e){ sbStatusEl.textContent = 'error'; console.error(e); }
+      try{ const { data } = await sb.from('orders').select('id').limit(1); sbStatusEl.textContent='connected'; }
+      catch(e){ sbStatusEl.textContent='error'; console.error(e); }
     }
     checkSupabase();
 
-    // -------------------------
     // Wallet Connect
-    // -------------------------
     const btnConnect = document.getElementById('btnConnect');
     const walletAddrEl = document.getElementById('walletAddr');
     let walletAddress = null;
     btnConnect.addEventListener('click', async ()=>{
       if(window.ethereum){
-        try{
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          walletAddress = accounts[0];
-          walletAddrEl.textContent = walletAddress;
-          btnConnect.textContent = 'Connected';
-        }catch(e){ alert('Could not connect wallet'); }
+        try{ const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        walletAddress = accounts[0]; walletAddrEl.textContent = walletAddress; btnConnect.textContent='Connected'; }
+        catch(e){ alert('Could not connect wallet'); }
       }else{ alert('No Web3 wallet found'); }
+    });
+
+    // Load orders
+    const ordersEl = document.getElementById('orders');
+    const filterType = document.getElementById('filterType');
+    async function loadOrders(){
+      ordersEl.innerHTML='<div class="muted small center">Loading...</div>';
+      let q = sb.from('orders').select('*').eq('status','open').order('created_at',{ascending:false});
+      if(filterType.value!=='all') q=q.eq('order_type',filterType.value);
+      const { data, error } = await q;
+      if(error){ ordersEl.innerHTML='<div class="muted">Could not load orders</div>'; return; }
+      if(!data||data.length===0){ ordersEl.innerHTML='<div class="muted">No orders yet</div>'; return; }
+      ordersEl.innerHTML='';
+      data.forEach(o=>{
+        const div=document.createElement('div'); div.className='order';
+        const left=document.createElement('div'); left.innerHTML=`<div style="font-weight:700">${o.order_type.toUpperCase()} • ${o.asset}</div><div class="small muted">Posted: ${new Date(o.created_at).toLocaleString()}</div><div class="muted small">${o.notes||''}</div>`;
+        const right=document.createElement('div');
+        right.innerHTML=`<div class="pill">${Number(o.amount).toLocaleString()} ${o.asset}</div><div class="muted small">Price: ${Number(o.price).toLocaleString()} ${o.fiat_currency}</div><div style="margin-top:8px" class="row"><button data-id="${o.id}" class="btnMatch">Match</button></div>`;
+        div.appendChild(left); div.appendChild(right); ordersEl.appendChild(div);
+      });
+      document.querySelectorAll('.btnMatch').forEach(b=>b.addEventListener('click',onMatch));
+    }
+    filterType.addEventListener('change',loadOrders);
+    document.getElementById('btnRefresh').addEventListener('click',loadOrders);
+    loadOrders();
+
+    // Post order
+    const orderForm = document.getElementById('order
