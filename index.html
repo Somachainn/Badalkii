@@ -1861,102 +1861,151 @@ async function loadWallet() {
       }
     }
 
-    // My Orders Modal functions
-    async function openMyOrdersModal() {
-      const modal = document.getElementById('myOrdersModal');
-      const ordersList = document.getElementById('ordersList');
-      
-      modal.classList.add('show');
-      ordersList.innerHTML = '<div class="loading-spinner"></div>';
-      
-      try {
-        const offers = await loadUserOffers();
-        
-        if (offers.length === 0) {
-          ordersList.innerHTML = '<p style="text-align:center; padding:20px;">No active orders found</p>';
-          return;
-        }
-        
-        let html = '';
-        offers.forEach(offer => {
-          const isSell = offer.selling.asset_code === LAAM_TOKEN.code;
-          const price = isSell ? (1/offer.price).toFixed(7) : offer.price;
-          
-          html += `
-            <div class="order-item" data-id="${offer.id}">
-              <div class="order-type ${isSell ? 'sell' : 'buy'}">${isSell ? 'SELL' : 'BUY'}</div>
-              <div class="order-amount">${offer.amount} Laam</div>
-              <div class="order-price">${price} XLM</div>
-            </div>
-          `;
-        });
-        
-        ordersList.innerHTML = html;
-        
-        document.querySelectorAll('.order-item').forEach(item => {
-          item.addEventListener('click', function() {
-            currentOfferId = this.getAttribute('data-id');
-            document.querySelectorAll('.order-item').forEach(i => i.classList.remove('selected'));
-            this.classList.add('selected');
-          });
-        });
-        
-      } catch (error) {
-        console.error('Error loading offers:', error);
-        ordersList.innerHTML = '<p style="text-align:center; padding:20px;">Error loading orders</p>';
-      }
+async function openMyOrdersModal() {
+  if (!currentKeypair) return showError("Please unlock wallet first.");
+  
+  document.getElementById("myOrdersModal").classList.add("show");
+  const ordersList = document.getElementById("ordersList");
+  ordersList.innerHTML = '<div class="loading-spinner"></div> Loading orders...';
+
+  try {
+    // Horizon request: account offers
+    const offers = await server.offers('accounts', currentKeypair.publicKey()).call();
+
+    ordersList.innerHTML = "";
+    if (offers.records.length === 0) {
+      ordersList.innerHTML = "<p>No active orders found.</p>";
     }
 
-    function closeMyOrdersModal() {
-      const modal = document.getElementById('myOrdersModal');
-      modal.classList.remove('show');
-      currentOfferId = null;
-    }
+    offers.records.forEach(offer => {
+      const div = document.createElement("div");
+      div.className = "order-item";
+      div.dataset.offerId = offer.id;
+      div.dataset.amount = offer.amount;
+      div.dataset.price = offer.price;
 
-    // Edit offer prompt
-    async function promptEditOffer() {
-      if (!currentOfferId) {
-        showError('Please select an order first');
-        return;
-      }
-      
-      try {
-        const offer = await server.offers().offer(currentOfferId).call();
-        const isSell = offer.selling.asset_code === LAAM_TOKEN.code;
-        const price = isSell ? (1/offer.price).toFixed(7) : offer.price;
-        
-        document.getElementById('editAmount').value = offer.amount;
-        document.getElementById('editPrice').value = price;
-        
-        document.getElementById('editOrderModal').classList.add('show');
-      } catch (error) {
-        showError('Failed to load offer details');
-      }
-    }
+      div.innerHTML = `
+        <div>
+          <div class="order-type ${offer.selling.asset_type === 'native' ? 'sell' : 'buy'}">
+            ${offer.selling.asset_type === 'native' ? 'SELL' : 'BUY'}
+          </div>
+          <div class="order-amount">${offer.amount} ${offer.selling.asset_code || 'XLM'}</div>
+        </div>
+        <div class="order-price">@ ${offer.price}</div>
+      `;
 
-    function closeEditModal() {
-      document.getElementById('editOrderModal').classList.remove('show');
-    }
+      div.addEventListener("click", () => {
+        document.querySelectorAll(".order-item").forEach(i => i.classList.remove("selected"));
+        div.classList.add("selected");
+        currentOfferId = offer.id;
+      });
 
-    // Confirm cancel offer
-    async function confirmCancelOffer() {
-      if (!currentOfferId) {
-        showError('Please select an order first');
-        return;
-      }
-      
-      if (confirm('Are you sure you want to cancel this order?')) {
-        try {
-          await cancelOffer(currentOfferId);
-          showSuccess('Order cancelled successfully!');
-          closeMyOrdersModal();
-          // Refresh the orders list
-          await openMyOrdersModal();
-        } catch (error) {
-          showError('Failed to cancel order: ' + error.message);
-        }
-      }
-    }
+      ordersList.appendChild(div);
+    });
+  } catch (err) {
+    console.error("Error fetching offers:", err);
+    ordersList.innerHTML = "<p>Error loading orders.</p>";
+  }
+}
+
+function promptEditOffer() {
+  if (!currentOfferId) return showError("Select an order first.");
+  const selected = document.querySelector(".order-item.selected");
+  if (!selected) return;
+
+  document.getElementById("editAmount").value = selected.dataset.amount;
+  document.getElementById("editPrice").value = selected.dataset.price;
+
+  document.getElementById("editOrderModal").classList.add("show");
+}
+
+async function confirmCancelOffer() {
+  if (!currentOfferId) return showError("Select an order first.");
+
+  if (!confirm("Are you sure you want to cancel this order?")) return;
+
+  try {
+    const account = await server.loadAccount(currentKeypair.publicKey());
+    const tx = new StellarSdk.TransactionBuilder(account, {
+      fee: await server.fetchBaseFee(),
+      networkPassphrase: StellarSdk.Networks.PUBLIC
+    })
+      .addOperation(StellarSdk.Operation.manageSellOffer({
+        offerId: currentOfferId,
+        selling: LAAM_ASSET,
+        buying: StellarSdk.Asset.native(),
+        amount: "0", // cancel
+        price: "1"
+      }))
+      .setTimeout(30)
+      .build();
+
+    tx.sign(currentKeypair);
+    await server.submitTransaction(tx);
+
+    showSuccess("Order cancelled successfully!");
+    openMyOrdersModal(); // refresh
+  } catch (err) {
+    console.error("Cancel error:", err);
+    showError("Failed to cancel order: " + err.message);
+  }
+}
+
+async function confirmEditOffer() {
+  if (!currentOfferId) return showError("Select an order first.");
+
+  const newAmount = document.getElementById("editAmount").value;
+  const newPrice = document.getElementById("editPrice").value;
+
+  if (!newAmount || !newPrice) return showError("Please enter amount and price.");
+
+  try {
+    const account = await server.loadAccount(currentKeypair.publicKey());
+    const fee = await server.fetchBaseFee();
+
+    // Soo hel order-kii hore
+    const offers = await server.offers('accounts', currentKeypair.publicKey()).call();
+    const offer = offers.records.find(o => o.id === currentOfferId);
+    if (!offer) return showError("Order not found!");
+
+    // Garan selling/buying assets
+    const selling = offer.selling.asset_type === "native"
+      ? StellarSdk.Asset.native()
+      : new StellarSdk.Asset(offer.selling.asset_code, offer.selling.asset_issuer);
+
+    const buying = offer.buying.asset_type === "native"
+      ? StellarSdk.Asset.native()
+      : new StellarSdk.Asset(offer.buying.asset_code, offer.buying.asset_issuer);
+
+    const tx = new StellarSdk.TransactionBuilder(account, {
+      fee,
+      networkPassphrase: StellarSdk.Networks.PUBLIC
+    })
+      .addOperation(StellarSdk.Operation.manageSellOffer({
+        offerId: currentOfferId,
+        selling: selling,
+        buying: buying,
+        amount: newAmount,
+        price: newPrice
+      }))
+      .setTimeout(30)
+      .build();
+
+    tx.sign(currentKeypair);
+    await server.submitTransaction(tx);
+
+    showSuccess("Order updated successfully!");
+    closeEditModal();
+    openMyOrdersModal(); // refresh orders
+  } catch (err) {
+    console.error("Edit error:", err);
+    showError("Failed to update order: " + err.message);
+  }
+}
+
+// Bind edit modal confirm button
+document.getElementById("confirmEditBtn").addEventListener("click", confirmEditOffer);
+
 
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
