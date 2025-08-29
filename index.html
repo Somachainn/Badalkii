@@ -26,6 +26,7 @@
             --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --admin-color: #8b5cf6;
         }
 
         * {
@@ -298,6 +299,16 @@
             color: white;
         }
 
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-admin {
+            background: var(--admin-color);
+            color: white;
+        }
+
         .btn-full {
             width: 100%;
         }
@@ -387,6 +398,131 @@
             font-weight: 500;
         }
 
+        /* Admin Panel */
+        .admin-panel {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            margin-bottom: 3rem;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .admin-tab {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: var(--surface-light);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .admin-tab.active {
+            background: var(--admin-color);
+            color: white;
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-table th {
+            background: var(--surface-light);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .admin-table tr:hover {
+            background: var(--surface-light);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--background);
+            color: var(--text-primary);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--surface);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .page-btn.active {
+            background: var(--admin-color);
+            color: white;
+            border-color: var(--admin-color);
+        }
+
         /* Modal */
         .modal {
             display: none;
@@ -452,6 +588,11 @@
             .stats {
                 grid-template-columns: 1fr;
             }
+            
+            .admin-table {
+                display: block;
+                overflow-x: auto;
+            }
         }
 
         /* Animations */
@@ -501,6 +642,11 @@
             background: rgba(59, 130, 246, 0.2);
             color: var(--primary-color);
         }
+
+        .status.suspended {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger-color);
+        }
     </style>
 </head>
 <body>
@@ -517,6 +663,7 @@
                     <li><a href="#orders">Orders</a></li>
                     <li><a href="#wallet">Wallet</a></li>
                     <li><a href="#history">History</a></li>
+                    <li><a href="#admin" id="adminLink" style="display: none;">Admin</a></li>
                 </ul>
                 <div class="user-section">
                     <div class="wallet-balance" id="walletBalance">
@@ -559,6 +706,190 @@
                 <div class="stat-card">
                     <div class="stat-value" id="avgTime">3.2min</div>
                     <div class="stat-label">Average Trade Time</div>
+                </div>
+            </section>
+
+            <!-- Admin Panel (Hidden by default) -->
+            <section class="admin-panel fade-in" id="adminPanel" style="display: none;">
+                <div class="admin-header">
+                    <h2 class="section-title">Admin Dashboard</h2>
+                    <button class="btn btn-admin" id="refreshAdmin">Refresh Data</button>
+                </div>
+
+                <div class="admin-tabs">
+                    <button class="admin-tab active" data-tab="users">Users</button>
+                    <button class="admin-tab" data-tab="orders">All Orders</button>
+                    <button class="admin-tab" data-tab="disputes">Disputes</button>
+                    <button class="admin-tab" data-tab="transactions">Transactions</button>
+                    <button class="admin-tab" data-tab="settings">Platform Settings</button>
+                </div>
+                
+                <!-- Users Tab -->
+                <div class="admin-content active" id="usersTab">
+                    <div class="search-box">
+                        <input type="text" class="search-input" id="userSearch" placeholder="Search users...">
+                        <button class="btn btn-primary" id="searchUsers">Search</button>
+                    </div>
+
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Registration</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+
+                    <div class="pagination" id="usersPagination">
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                    </div>
+                </div>
+
+                <!-- Orders Tab -->
+                <div class="admin-content" id="ordersTab">
+                    <div class="search-box">
+                        <input type="text" class="search-input" id="orderSearch" placeholder="Search orders...">
+                        <button class="btn btn-primary" id="searchOrders">Search</button>
+                    </div>
+
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Crypto</th>
+                                <th>Amount</th>
+                                <th>Price</th>
+                                <th>User</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Orders will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+
+                    <div class="pagination" id="ordersPagination">
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                    </div>
+                </div>
+
+                <!-- Disputes Tab -->
+                <div class="admin-content" id="disputesTab">
+                    <div class="search-box">
+                        <input type="text" class="search-input" id="disputeSearch" placeholder="Search disputes...">
+                        <button class="btn btn-primary" id="searchDisputes">Search</button>
+                    </div>
+
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Order ID</th>
+                                <th>Parties</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="disputesTableBody">
+                            <!-- Disputes will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+
+                    <div class="pagination" id="disputesPagination">
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                    </div>
+                </div>
+
+                <!-- Transactions Tab -->
+                <div class="admin-content" id="transactionsTab">
+                    <div class="search-box">
+                        <input type="text" class="search-input" id="transactionSearch" placeholder="Search transactions...">
+                        <button class="btn btn-primary" id="searchTransactions">Search</button>
+                    </div>
+
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Currency</th>
+                                <th>From/To</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                            <!-- Transactions will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+
+                    <div class="pagination" id="transactionsPagination">
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="admin-content" id="settingsTab">
+                    <h3 style="margin-bottom: 1.5rem;">Platform Settings</h3>
+                    
+                    <form id="platformSettingsForm">
+                        <div class="form-group">
+                            <label class="form-label">Trading Fee (%)</label>
+                            <input type="number" class="form-input" id="tradingFee" value="0.5" step="0.1" min="0" max="5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Withdrawal Fee (USDT)</label>
+                            <input type="number" class="form-input" id="withdrawalFee" value="1.0" step="0.5" min="0" max="10">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Minimum Trade Amount (USDT)</label>
+                            <input type="number" class="form-input" id="minTradeAmount" value="10.0" step="1" min="1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Maximum Trade Amount (USDT)</label>
+                            <input type="number" class="form-input" id="maxTradeAmount" value="10000.0" step="100" min="100">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Auto-Cancel Time (minutes)</label>
+                            <input type="number" class="form-input" id="autoCancelTime" value="30" step="5" min="5" max="1440">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Platform Status</label>
+                            <select class="form-select" id="platformStatus">
+                                <option value="online">Online</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="paused">Paused</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Save Settings</button>
+                    </form>
                 </div>
             </section>
 
@@ -680,6 +1011,19 @@
         </div>
     </div>
 
+    <!-- Admin User Details Modal -->
+    <div class="modal" id="adminUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">User Details</h3>
+                <button class="close-btn" id="closeAdminUserModal">&times;</button>
+            </div>
+            <div id="adminUserDetails">
+                <!-- User details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // Global variables
         let currentUser = null;
@@ -687,6 +1031,11 @@
         let currentFilter = 'all';
         let orderType = 'buy';
         let isAuthenticated = false;
+        let isAdmin = false;
+        let adminUsers = [];
+        let adminAllOrders = [];
+        let adminDisputes = [];
+        let adminTransactions = [];
 
         // Sample data
         const sampleOrders = [
@@ -747,6 +1096,29 @@
             }
         ];
 
+        // Sample admin data
+        const sampleAdminUsers = [
+            { id: 1, username: 'Ahmed123', email: 'ahmed@example.com', status: 'active', registrationDate: '2023-05-15', trades: 42, rating: 4.8 },
+            { id: 2, username: 'Fatima456', email: 'fatima@example.com', status: 'active', registrationDate: '2023-06-20', trades: 28, rating: 4.9 },
+            { id: 3, username: 'Mohamed789', email: 'mohamed@example.com', status: 'suspended', registrationDate: '2023-04-10', trades: 15, rating: 3.5 },
+            { id: 4, username: 'Khadija321', email: 'khadija@example.com', status: 'active', registrationDate: '2023-07-05', trades: 67, rating: 4.7 },
+            { id: 5, username: 'Omar654', email: 'omar@example.com', status: 'active', registrationDate: '2023-03-22', trades: 89, rating: 4.9 }
+        ];
+
+        const sampleAdminDisputes = [
+            { id: 1, orderId: 102, parties: 'Ahmed123 vs Fatima456', reason: 'Payment not received', status: 'open', created: '2023-10-15' },
+            { id: 2, orderId: 156, parties: 'Mohamed789 vs Khadija321', reason: 'Wrong amount sent', status: 'in_review', created: '2023-10-14' },
+            { id: 3, orderId: 201, parties: 'Omar654 vs Ahmed123', reason: 'Late payment', status: 'resolved', created: '2023-10-10' }
+        ];
+
+        const sampleAdminTransactions = [
+            { id: 1, type: 'trade', amount: 100, currency: 'USDT', fromTo: 'Ahmed123 → Fatima456', status: 'completed', date: '2023-10-15 14:30' },
+            { id: 2, type: 'withdrawal', amount: 50, currency: 'USDT', fromTo: 'Mohamed789 → External', status: 'pending', date: '2023-10-15 13:45' },
+            { id: 3, type: 'deposit', amount: 500, currency: 'USDT', fromTo: 'External → Khadija321', status: 'completed', date: '2023-10-15 12:20' },
+            { id: 4, type: 'trade', amount: 250, currency: 'USDT', fromTo: 'Omar654 → Ahmed123', status: 'completed', date: '2023-10-15 11:15' },
+            { id: 5, type: 'fee', amount: 1.25, currency: 'USDT', fromTo: 'System → Platform', status: 'completed', date: '2023-10-15 10:30' }
+        ];
+
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
@@ -761,11 +1133,19 @@
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
                 isAuthenticated = true;
+                
+                // Check if user is admin (simulate with email)
+                isAdmin = currentUser.email === 'admin@cryptosomali.com';
+                
                 updateUserInterface();
             }
 
             // Initialize orders with sample data
             orders = [...sampleOrders];
+            adminAllOrders = [...sampleOrders];
+            adminUsers = [...sampleAdminUsers];
+            adminDisputes = [...sampleAdminDisputes];
+            adminTransactions = [...sampleAdminTransactions];
         }
 
         function setupEventListeners() {
@@ -790,6 +1170,7 @@
             // Modals
             document.getElementById('closeLoginModal').addEventListener('click', hideLoginModal);
             document.getElementById('closeOrderModal').addEventListener('click', hideOrderModal);
+            document.getElementById('closeAdminUserModal').addEventListener('click', hideAdminUserModal);
             
             // Calculate total amount
             document.getElementById('amountInput').addEventListener('input', calculateTotal);
@@ -799,6 +1180,20 @@
             document.getElementById('startTradingBtn').addEventListener('click', () => {
                 document.getElementById('trading').scrollIntoView({ behavior: 'smooth' });
             });
+            
+            // Admin panel
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => switchAdminTab(e.target.dataset.tab));
+            });
+            
+            document.getElementById('refreshAdmin').addEventListener('click', refreshAdminData);
+            document.getElementById('platformSettingsForm').addEventListener('submit', savePlatformSettings);
+            
+            // Admin search buttons
+            document.getElementById('searchUsers').addEventListener('click', searchUsers);
+            document.getElementById('searchOrders').addEventListener('click', searchOrders);
+            document.getElementById('searchDisputes').addEventListener('click', searchDisputes);
+            document.getElementById('searchTransactions').addEventListener('click', searchTransactions);
         }
 
         function setOrderType(type) {
@@ -887,6 +1282,7 @@
             // Simulate API call
             setTimeout(() => {
                 orders.unshift(orderData);
+                adminAllOrders.unshift(orderData);
                 loadOrders();
                 updateStats();
                 
@@ -994,6 +1390,10 @@
             document.getElementById('orderModal').style.display = 'none';
         }
 
+        function hideAdminUserModal() {
+            document.getElementById('adminUserModal').style.display = 'none';
+        }
+
         function handleAuth(e) {
             e.preventDefault();
             
@@ -1011,6 +1411,10 @@
                 
                 currentUser = user;
                 isAuthenticated = true;
+                
+                // Check if user is admin
+                isAdmin = email === 'admin@cryptosomali.com';
+                
                 localStorage.setItem('cryptosomali_user', JSON.stringify(user));
                 
                 updateUserInterface();
@@ -1040,9 +1444,15 @@
                 document.getElementById('loginBtn').style.display = 'none';
                 document.getElementById('connectWallet').style.display = 'block';
                 document.getElementById('connectWallet').textContent = currentUser.username;
+                
+                // Show admin link if user is admin
+                if (isAdmin) {
+                    document.getElementById('adminLink').style.display = 'block';
+                }
             } else {
                 document.getElementById('loginBtn').style.display = 'block';
                 document.getElementById('connectWallet').style.display = 'none';
+                document.getElementById('adminLink').style.display = 'none';
             }
         }
 
@@ -1076,16 +1486,414 @@
             requestAnimationFrame(update);
         }
 
+        // Admin panel functions
+        function switchAdminTab(tabName) {
+            // Update active tab
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+            
+            // Show active content
+            document.querySelectorAll('.admin-content').forEach(content => {
+                content.classList.toggle('active', content.id === `${tabName}Tab`);
+            });
+            
+            // Load data for the tab
+            switch(tabName) {
+                case 'users':
+                    loadAdminUsers();
+                    break;
+                case 'orders':
+                    loadAdminOrders();
+                    break;
+                case 'disputes':
+                    loadAdminDisputes();
+                    break;
+                case 'transactions':
+                    loadAdminTransactions();
+                    break;
+                case 'settings':
+                    loadPlatformSettings();
+                    break;
+            }
+        }
+
+        function loadAdminUsers() {
+            const tableBody = document.getElementById('usersTableBody');
+            
+            tableBody.innerHTML = adminUsers.map(user => `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td><span class="status ${user.status}">${user.status}</span></td>
+                    <td>${user.registrationDate}</td>
+                    <td class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="viewUserDetails(${user.id})">View</button>
+                        ${user.status === 'active' ? 
+                            `<button class="action-btn btn-warning" onclick="suspendUser(${user.id})">Suspend</button>` : 
+                            `<button class="action-btn btn-success" onclick="activateUser(${user.id})">Activate</button>`
+                        }
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadAdminOrders() {
+            const tableBody = document.getElementById('ordersTableBody');
+            
+            tableBody.innerHTML = adminAllOrders.map(order => `
+                <tr>
+                    <td>${order.id}</td>
+                    <td><span class="order-type ${order.type}">${order.type}</span></td>
+                    <td>${order.crypto}</td>
+                    <td>${order.amount}</td>
+                    <td>${order.price.toLocaleString()} ETB</td>
+                    <td>${order.user}</td>
+                    <td><span class="status ${order.status}">${order.status}</span></td>
+                    <td class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="viewOrderDetails(${order.id})">View</button>
+                        ${order.status === 'active' ? 
+                            `<button class="action-btn btn-warning" onclick="cancelOrder(${order.id})">Cancel</button>` : 
+                            ''
+                        }
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadAdminDisputes() {
+            const tableBody = document.getElementById('disputesTableBody');
+            
+            tableBody.innerHTML = adminDisputes.map(dispute => `
+                <tr>
+                    <td>${dispute.id}</td>
+                    <td>${dispute.orderId}</td>
+                    <td>${dispute.parties}</td>
+                    <td>${dispute.reason}</td>
+                    <td><span class="status ${dispute.status}">${dispute.status.replace('_', ' ')}</span></td>
+                    <td>${dispute.created}</td>
+                    <td class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="viewDispute(${dispute.id})">View</button>
+                        ${dispute.status === 'open' ? 
+                            `<button class="action-btn btn-success" onclick="resolveDispute(${dispute.id})">Resolve</button>` : 
+                            ''
+                        }
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadAdminTransactions() {
+            const tableBody = document.getElementById('transactionsTableBody');
+            
+            tableBody.innerHTML = adminTransactions.map(transaction => `
+                <tr>
+                    <td>${transaction.id}</td>
+                    <td>${transaction.type}</td>
+                    <td>${transaction.amount}</td>
+                    <td>${transaction.currency}</td>
+                    <td>${transaction.fromTo}</td>
+                    <td><span class="status ${transaction.status}">${transaction.status}</span></td>
+                    <td>${transaction.date}</td>
+                    <td class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="viewTransaction(${transaction.id})">View</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadPlatformSettings() {
+            // In a real app, this would load from an API
+            document.getElementById('tradingFee').value = 0.5;
+            document.getElementById('withdrawalFee').value = 1.0;
+            document.getElementById('minTradeAmount').value = 10.0;
+            document.getElementById('maxTradeAmount').value = 10000.0;
+            document.getElementById('autoCancelTime').value = 30;
+            document.getElementById('platformStatus').value = 'online';
+        }
+
+        function refreshAdminData() {
+            // Simulate data refresh
+            alert('Admin data refreshed!');
+            
+            // Reload all admin tabs
+            switchAdminTab(document.querySelector('.admin-tab.active').dataset.tab);
+        }
+
+        function savePlatformSettings(e) {
+            e.preventDefault();
+            
+            // In a real app, this would save to an API
+            alert('Platform settings saved successfully!');
+        }
+
+        function searchUsers() {
+            const query = document.getElementById('userSearch').value.toLowerCase();
+            if (!query) {
+                loadAdminUsers();
+                return;
+            }
+            
+            const filteredUsers = adminUsers.filter(user => 
+                user.username.toLowerCase().includes(query) || 
+                user.email.toLowerCase().includes(query)
+            );
+            
+            const tableBody = document.getElementById('usersTableBody');
+            tableBody.innerHTML = filteredUsers.map(user => `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td><span class="status ${user.status}">${user.status}</span></td>
+                    <td>${user.registrationDate}</td>
+                    <td class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="viewUserDetails(${user.id})">View</button>
+                        ${user.status === 'active' ? 
+                            `<button class="action-btn btn-warning" onclick="suspendUser(${user.id})">Suspend</button>` : 
+                            `<button class="action-btn btn-success" onclick="activateUser(${user.id})">Activate</button>`
+                        }
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function searchOrders() {
+            const query = document.getElementById('orderSearch').value.toLowerCase();
+            if (!query) {
+                loadAdminOrders();
+                return;
+            }
+            
+            const filteredOrders = adminAllOrders.filter(order => 
+                order.id.toString().includes(query) || 
+                order.user.toLowerCase().includes(query) ||
+                order.crypto.toLowerCase().includes(query)
+            );
+            
+            const tableBody = document.getElementById('ordersTableBody');
+            tableBody.innerHTML = filteredOrders.map(order => `
+                <tr>
+                    <td>${order.id}</td>
+                    <td><span class="order-type ${order.type}">${order.type}</span></td>
+                    <td>${order.crypto}</td>
+                    <td>${order.amount}</td>
+                    <td>${order.price.toLocaleString()} ETB</td>
+                    <td>${order.user}</td>
+                    <td><span class="status ${order.status}">${order.status}</span></td>
+                    <td class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="viewOrderDetails(${order.id})">View</button>
+                        ${order.status === 'active' ? 
+                            `<button class="action-btn btn-warning" onclick="cancelOrder(${order.id})">Cancel</button>` : 
+                            ''
+                        }
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function searchDisputes() {
+            const query = document.getElementById('disputeSearch').value.toLowerCase();
+            if (!query) {
+                loadAdminDisputes();
+                return;
+            }
+            
+            const filteredDisputes = adminDisputes.filter(dispute => 
+                dispute.id.toString().includes(query) || 
+                dispute.orderId.toString().includes(query) ||
+                dispute.parties.toLowerCase().includes(query)
+            );
+            
+            const tableBody = document.getElementById('disputesTableBody');
+            tableBody.innerHTML = filteredDisputes.map(dispute => `
+                <tr>
+                    <td>${dispute.id}</td>
+                    <td>${dispute.orderId}</td>
+                    <td>${dispute.parties}</td>
+                    <td>${dispute.reason}</td>
+                    <td><span class="status ${dispute.status}">${dispute.status.replace('_', ' ')}</span></td>
+                    <td>${dispute.created}</td>
+                    <td class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="viewDispute(${dispute.id})">View</button>
+                        ${dispute.status === 'open' ? 
+                            `<button class="action-btn btn-success" onclick="resolveDispute(${dispute.id})">Resolve</button>` : 
+                            ''
+                        }
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function searchTransactions() {
+            const query = document.getElementById('transactionSearch').value.toLowerCase();
+            if (!query) {
+                loadAdminTransactions();
+                return;
+            }
+            
+            const filteredTransactions = adminTransactions.filter(transaction => 
+                transaction.id.toString().includes(query) || 
+                transaction.type.toLowerCase().includes(query) ||
+                transaction.fromTo.toLowerCase().includes(query)
+            );
+            
+            const tableBody = document.getElementById('transactionsTableBody');
+            tableBody.innerHTML = filteredTransactions.map(transaction => `
+                <tr>
+                    <td>${transaction.id}</td>
+                    <td>${transaction.type}</td>
+                    <td>${transaction.amount}</td>
+                    <td>${transaction.currency}</td>
+                    <td>${transaction.fromTo}</td>
+                    <td><span class="status ${transaction.status}">${transaction.status}</span></td>
+                    <td>${transaction.date}</td>
+                    <td class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="viewTransaction(${transaction.id})">View</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Admin action functions
+        function viewUserDetails(userId) {
+            const user = adminUsers.find(u => u.id === userId);
+            if (!user) return;
+            
+            const modal = document.getElementById('adminUserModal');
+            const details = document.getElementById('adminUserDetails');
+            
+            details.innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <span style="font-weight: 600; font-size: 1.2rem;">${user.username}</span>
+                        <span class="status ${user.status}">${user.status}</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Email</div>
+                        <div style="font-weight: 600;">${user.email}</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Registration Date</div>
+                            <div style="font-weight: 600;">${user.registrationDate}</div>
+                        </div>
+                        <div>
+                            <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Total Trades</div>
+                            <div style="font-weight: 600;">${user.trades}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Rating</div>
+                        <div style="font-weight: 600;">${user.rating}/5.0</div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem;">
+                        ${user.status === 'active' ? 
+                            `<button class="btn btn-warning" onclick="suspendUser(${user.id})">Suspend User</button>` : 
+                            `<button class="btn btn-success" onclick="activateUser(${user.id})">Activate User</button>`
+                        }
+                        <button class="btn btn-primary" onclick="messageUser(${user.id})">Send Message</button>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        function suspendUser(userId) {
+            if (confirm('Are you sure you want to suspend this user?')) {
+                const user = adminUsers.find(u => u.id === userId);
+                if (user) {
+                    user.status = 'suspended';
+                    loadAdminUsers();
+                    alert('User has been suspended.');
+                }
+            }
+        }
+
+        function activateUser(userId) {
+            if (confirm('Are you sure you want to activate this user?')) {
+                const user = adminUsers.find(u => u.id === userId);
+                if (user) {
+                    user.status = 'active';
+                    loadAdminUsers();
+                    alert('User has been activated.');
+                }
+            }
+        }
+
+        function messageUser(userId) {
+            const user = adminUsers.find(u => u.id === userId);
+            if (user) {
+                const message = prompt(`Enter message to send to ${user.username}:`);
+                if (message) {
+                    alert(`Message sent to ${user.username}`);
+                }
+            }
+        }
+
+        function viewOrderDetails(orderId) {
+            const order = adminAllOrders.find(o => o.id === orderId);
+            if (order) {
+                showOrderDetails(orderId);
+            }
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                const order = adminAllOrders.find(o => o.id === orderId);
+                if (order) {
+                    order.status = 'cancelled';
+                    loadAdminOrders();
+                    alert('Order has been cancelled.');
+                }
+            }
+        }
+
+        function viewDispute(disputeId) {
+            const dispute = adminDisputes.find(d => d.id === disputeId);
+            if (dispute) {
+                alert(`Dispute Details:\nID: ${dispute.id}\nOrder: ${dispute.orderId}\nParties: ${dispute.parties}\nReason: ${dispute.reason}\nStatus: ${dispute.status}`);
+            }
+        }
+
+        function resolveDispute(disputeId) {
+            if (confirm('Are you sure you want to mark this dispute as resolved?')) {
+                const dispute = adminDisputes.find(d => d.id === disputeId);
+                if (dispute) {
+                    dispute.status = 'resolved';
+                    loadAdminDisputes();
+                    alert('Dispute has been resolved.');
+                }
+            }
+        }
+
+        function viewTransaction(transactionId) {
+            const transaction = adminTransactions.find(t => t.id === transactionId);
+            if (transaction) {
+                alert(`Transaction Details:\nID: ${transaction.id}\nType: ${transaction.type}\nAmount: ${transaction.amount} ${transaction.currency}\nParties: ${transaction.fromTo}\nStatus: ${transaction.status}\nDate: ${transaction.date}`);
+            }
+        }
+
         // Close modals when clicking outside
         window.addEventListener('click', function(e) {
             const loginModal = document.getElementById('loginModal');
             const orderModal = document.getElementById('orderModal');
+            const adminUserModal = document.getElementById('adminUserModal');
             
             if (e.target === loginModal) {
                 hideLoginModal();
             }
             if (e.target === orderModal) {
                 hideOrderModal();
+            }
+            if (e.target === adminUserModal) {
+                hideAdminUserModal();
             }
         });
 
@@ -1104,10 +1912,26 @@
                     created: new Date()
                 };
                 orders.unshift(newOrder);
+                adminAllOrders.unshift(newOrder);
                 loadOrders();
                 updateStats();
             }
         }, 30000);
+
+        // Expose functions to global scope for onclick attributes
+        window.viewUserDetails = viewUserDetails;
+        window.suspendUser = suspendUser;
+        window.activateUser = activateUser;
+        window.messageUser = messageUser;
+        window.viewOrderDetails = viewOrderDetails;
+        window.cancelOrder = cancelOrder;
+        window.viewDispute = viewDispute;
+        window.resolveDispute = resolveDispute;
+        window.viewTransaction = viewTransaction;
+        window.showOrderDetails = showOrderDetails;
+        window.initiateTradeChat = initiateTradeChat;
     </script>
 </body>
 </html>
+
+           
